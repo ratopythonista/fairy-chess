@@ -50,7 +50,7 @@
                       <th>Position</th>
                       <th>Summoner</th>
                       {% for match in range(info.matches) %}
-                        <th>Match #{{match}}</th>
+                        <th><a class="nav-link" href="{{ url_for('match')}}">Match #{{match}}</a></th>
                       {% endfor %}
                       <th>Points</th>
                     </tr>

@@ -8,7 +8,7 @@ from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
 from data.lobby import get_lobby
 from data.match import get_matches
-from data.tournament import get_tournament
+from data.tournament import get_tournament, get_tournament_list
 
 
 async def my_context_dependency(request: Request, x_client_id = Header(None)):
@@ -32,6 +32,7 @@ templates = Jinja2Templates(directory="./templates")
 
 @app.get("/", response_class=HTMLResponse)
 async def index():
+    context["info"] = get_tournament_list()
     return templates.TemplateResponse("index.html", context.data)
 
 @app.get("/lobby", response_class=HTMLResponse)
@@ -45,6 +46,6 @@ async def match():
     return templates.TemplateResponse("match.html", context.data)
 
 @app.get("/tournament", response_class=HTMLResponse)
-async def match():
+async def tournament():
     context.data["info"] = get_tournament() 
     return templates.TemplateResponse("tournament.html", context.data)

@@ -82,7 +82,7 @@
                               {% for lobby in info.lobbies %}
                               <tr>
                                 <td>
-                                  {{lobby.name}}
+                                  <a class="nav-link" href="{{ url_for('lobby')}}">{{lobby.name}}</a>
                                 </td>
                                 <td>
                                   {% for summoner in lobby.summoners%}
