@@ -6,6 +6,9 @@ from fastapi import FastAPI, Depends, Header, Request
 from starlette_context import context, request_cycle_context
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
+from data.lobby import get_lobby
+from data.match import get_matches
+from data.tournament import get_tournament
 
 
 async def my_context_dependency(request: Request, x_client_id = Header(None)):
@@ -16,7 +19,7 @@ async def my_context_dependency(request: Request, x_client_id = Header(None)):
 
 app = FastAPI(dependencies=[Depends(my_context_dependency)])
 
-app.mount("/fairy_chess/static", StaticFiles(directory="./static"), name="static")
+app.mount("/static", StaticFiles(directory="./static"), name="static")
 
 uptrace.configure_opentelemetry(
     service_name="fairy_chess",
@@ -30,3 +33,18 @@ templates = Jinja2Templates(directory="./templates")
 @app.get("/", response_class=HTMLResponse)
 async def index():
     return templates.TemplateResponse("index.html", context.data)
+
+@app.get("/lobby", response_class=HTMLResponse)
+async def lobby():
+    context.data["info"] = get_lobby() 
+    return templates.TemplateResponse("lobby.html", context.data)
+
+@app.get("/match", response_class=HTMLResponse)
+async def match():
+    context.data["info"] = get_matches() 
+    return templates.TemplateResponse("match.html", context.data)
+
+@app.get("/tournament", response_class=HTMLResponse)
+async def match():
+    context.data["info"] = get_tournament() 
+    return templates.TemplateResponse("tournament.html", context.data)

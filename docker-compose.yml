@@ -10,7 +10,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - .:/app
+      - ./fairy_chess:/fairy_chess
     networks:
       - fairy-chess-network
 
