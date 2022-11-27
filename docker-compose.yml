@@ -1,0 +1,19 @@
+version: "3"
+services:
+  fairy_chess:
+    image: ratopythonista/fairy_chess:latest
+    build: ./
+    container_name: fairy_chess
+    command: bash -c "gunicorn --workers=1 --worker-class=uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000 --timeout=360000 main:app"
+    env_file:
+      - fairy_chess/.env
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    networks:
+      - fairy-chess-network
+
+networks:
+  fairy-chess-network:
+    driver: bridge
