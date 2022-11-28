@@ -1,33 +1,22 @@
-import uptrace
 from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from fastapi import FastAPI, Depends, Header, Request
-from starlette_context import context, request_cycle_context
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+
+from fastapi import FastAPI, Depends
+from starlette_context import context
+
 
 from data.lobby import get_lobby
 from data.match import get_matches
 from data.tournament import get_tournament, get_tournament_list
 
+from utils.contex import context_config
+from utils.tracing import tracing_config
+from utils.templates import templates_config
 
-async def my_context_dependency(request: Request, x_client_id = Header(None)):
-    data = {"x_client_id": x_client_id, "request": request}
-    with request_cycle_context(data):
-        yield
+app = FastAPI(dependencies=[Depends(context_config)])
 
 
-app = FastAPI(dependencies=[Depends(my_context_dependency)])
-
-app.mount("/static", StaticFiles(directory="./static"), name="static")
-
-uptrace.configure_opentelemetry(
-    service_name="fairy_chess",
-    service_version="0.1.0",
-)
-FastAPIInstrumentor.instrument_app(app)
-
-templates = Jinja2Templates(directory="./templates")
+tracing_config(app)
+templates = templates_config(app)
 
 
 @app.get("/", response_class=HTMLResponse)
