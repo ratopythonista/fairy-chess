@@ -31,22 +31,13 @@ templates = templates_config(app)
 async def index(request: Request):
     context["info"] = get_tournament_list()
     context["user"] = session_data.get_current(request.client.host)
-    return templates.TemplateResponse("index.html", context.data)
-
-@app.get("/lobby", response_class=HTMLResponse)
-async def lobby():
-    context.data["info"] = get_lobby() 
-    return templates.TemplateResponse("lobby.html", context.data)
+    return RedirectResponse(url='/match', status_code=HTTP_303_SEE_OTHER)
 
 @app.get("/match", response_class=HTMLResponse)
-async def match():
-    context.data["info"] = get_matches() 
+async def match(request: Request):
+    context["info"] = get_matches() 
+    context["user"] = session_data.get_current(request.client.host)
     return templates.TemplateResponse("match.html", context.data)
-
-@app.get("/tournament", response_class=HTMLResponse)
-async def tournament():
-    context.data["info"] = get_tournament() 
-    return templates.TemplateResponse("tournament.html", context.data)
 
 @app.get("/login", response_class=HTMLResponse)
 async def login():  

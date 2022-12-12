@@ -9,54 +9,7 @@
   <div class="page">
     <!-- Navbar -->
     {% include 'header.html' %}
-    <div class="page-wrapper">
-      <div class="page-header d-print-none text-white">
-        <div class="container-xl">
-          <div class="row g-2 align-items-center">
-            <div class="col">
-              <h2 class="page-title">
-                Next Tournaments
-              </h2>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Page body -->
-      <div class="page-body">
-        <div class="container-xl">
-          <div class="row row-deck row-cards">
-            {% for tournament in info%}
-            <div class="col-md-6 col-lg-3">
-              <div class="card">
-                <div class="ribbon bg-red">
-                  <a class="nav-link" href="{{ url_for('tournament')}}">
-                    JOIN
-                  </a>
-                </div>
-                <div class="card-body">
-                  <h3 class="card-title">{{tournament.name}}</h3>
-                  <p class="text-muted">{{tournament.date}}</p>
-                </div>
-                <div class="card-footer">
-                  <div class="row align-items-center">
-                    <div class="col-auto ms-auto">
-                      <div class="avatar-list avatar-list-stacked">
-                        {% for summoner in tournament.summoners%}
-                          <span class="avatar avatar-sm avatar-rounded">{{summoner}}</span>
-                        {% endfor %}
-                        <span class="avatar avatar-sm avatar-rounded">+3</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-      {% include 'footer.html' %}
-      
+    {% include 'footer.html' %}
     </div>
   </div>
   <!-- Libs JS -->
