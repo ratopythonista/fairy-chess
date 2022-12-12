@@ -4,17 +4,22 @@ from jose import jwe
 
 from fairy_chess.config import API_KEY
 from fairy_chess.data import user_base
+from fairy_chess.services.riot import get_summoner
 
-def put(name: str, email: str, password: str, user_id=str(uuid4())):
+def put(name: str, email: str, password: str, summoner: str, user_id=str(uuid4())):
+    summoner_info: dict = get_summoner(summoner)
     user_base.put(
         {
             "email": email,
             "name": name,
-            "password": jwe.encrypt(password, API_KEY, algorithm='dir', encryption='A128GCM').decode()
+            "password": jwe.encrypt(password, API_KEY, algorithm='dir', encryption='A128GCM').decode(),
+            "puuid": summoner_info.get("puuid")
         },
         key=user_id
     )
     
+def get(user_id: str):
+    return user_base.get(user_id)
 
 def authenticate(email: str, password: str):
     user_dict: dict = user_base.fetch({"email": email}).items

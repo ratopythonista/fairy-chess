@@ -12,6 +12,8 @@ from fastapi import FastAPI, Depends, Form, Response
 import fairy_chess.data.user as user_data
 import fairy_chess.data.session as session_data
 
+from fairy_chess.services.riot import get_icon
+
 from fairy_chess.data.lobby import get_lobby
 from fairy_chess.data.match import get_matches
 from fairy_chess.data.tournament import get_tournament, get_tournament_list
@@ -35,8 +37,11 @@ async def index(request: Request):
 
 @app.get("/match", response_class=HTMLResponse)
 async def match(request: Request):
-    context["info"] = get_matches() 
-    context["user"] = session_data.get_current(request.client.host)
+    context["info"] = get_matches()
+    if session_data.get_current(request.client.host):
+        user: dict = user_data.get(session_data.get_current(request.client.host).get("value"))
+        context["user"] = {"name": user.get("name"), "icon": get_icon(user["puuid"])}
+
     return templates.TemplateResponse("match.html", context.data)
 
 @app.get("/login", response_class=HTMLResponse)
@@ -58,8 +63,8 @@ async def auth(request: Request, username: str = Form(), password: str = Form())
     return RedirectResponse(url='/', status_code=HTTP_303_SEE_OTHER)
 
 @app.post("/users", response_class=HTMLResponse)
-async def create_user(username: str = Form(), password: str = Form(), name: str = Form()):
-    user_data.put(email=username, password=password, name=name)
+async def create_user(username: str = Form(), password: str = Form(), name: str = Form(), summoner: str = Form()):
+    user_data.put(email=username, password=password, name=name, summoner=summoner)
     return RedirectResponse(url='/login', status_code=HTTP_303_SEE_OTHER)
 
 @app.get("/logout", response_class=HTMLResponse)
