@@ -1,3 +1,9 @@
+from fairy_chess.data import tournament_base
+
+
+
+
+
 def sample(index):
     return {
         "name": f"lobby {index}",

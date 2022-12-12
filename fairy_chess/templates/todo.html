@@ -1,0 +1,47 @@
+
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <title>Fairy Chess</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta16/dist/js/tabler.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta16/dist/css/tabler.min.css">
+    <!-- CSS files -->
+    <link href="./dist/css/tabler.min.css?1668288743" rel="stylesheet"/>
+    <link href="./dist/css/tabler-flags.min.css?1668288743" rel="stylesheet"/>
+    <link href="./dist/css/tabler-payments.min.css?1668288743" rel="stylesheet"/>
+    <link href="./dist/css/tabler-vendors.min.css?1668288743" rel="stylesheet"/>
+    <link href="./dist/css/demo.min.css?1668288743" rel="stylesheet"/>
+    <style>
+      @import url('https://rsms.me/inter/inter.css');
+      :root {
+      	--tblr-font-sans-serif: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+      }
+    </style>
+  </head>
+  <body  class=" border-top-wide border-primary d-flex flex-column">
+    <script src="./dist/js/demo-theme.min.js?1668288743"></script>
+    <div class="page page-center">
+      <div class="container-tight py-4">
+        <div class="empty">
+          <div class="empty-img"><img src="{{ url_for('static', path='/todo.svg') }}" height="128" alt="">
+          </div>
+          <p class="empty-title">Estamos trabalhando nisso!</p>
+          <p class="empty-subtitle text-muted">
+            Pode acreditar, nossa equipe esta transfomando pizza em codigo nesse exato momento!
+          </p>
+          <div class="empty-action">
+            <a href="{{ url_for('index') }}" class="btn btn-primary">
+              <!-- Download SVG icon from http://tabler-icons.io/i/arrow-left -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="5" y1="12" x2="19" y2="12" /><line x1="5" y1="12" x2="11" y2="18" /><line x1="5" y1="12" x2="11" y2="6" /></svg>
+              Pagina Inicial
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Libs JS -->
+    <!-- Tabler Core -->
+    <script src="./dist/js/tabler.min.js?1668288743" defer></script>
+    <script src="./dist/js/demo.min.js?1668288743" defer></script>
+  </body>
+</html>
