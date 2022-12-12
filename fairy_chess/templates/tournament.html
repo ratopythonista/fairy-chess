@@ -1,0 +1,135 @@
+<html>
+<head>
+    <title>Fairy Chess</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta16/dist/js/tabler.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta16/dist/css/tabler.min.css">
+</head>
+<body class="theme-light">
+  <script src="./dist/js/demo-theme.min.js?1668288743"></script>
+  <div class="page">
+    <!-- Navbar -->
+    {% include 'header.html' %}
+    <div class="page-wrapper">
+      <div class="page-header d-print-none text-white">
+        <div class="container-xl">
+          <div class="row g-2 align-items-center">
+            <div class="col">
+              <div class="page-pretitle">
+                Sesson 8
+              </div>
+              <h2 class="page-title">
+                Fairy Chess Championship #3.27
+              </h2>
+            </div>
+            <!-- Page title actions -->
+            <div class="col-auto ms-auto d-print-none">
+              <div class="btn-list">
+                <a href="#" class="btn btn-primary d-none d-sm-inline-block" data-bs-toggle="modal" data-bs-target="#modal-report">
+                  <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-player-track-next" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M3 5v14l8 -7z"></path>
+                    <path d="M14 5v14l8 -7z"></path>
+                 </svg>
+                  Next Match
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Page body -->
+      <div class="page-body">
+        <div class="container-xl">
+          <div class="row row-deck row-cards">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <ul class="nav nav-tabs card-header-tabs nav-fill" data-bs-toggle="tabs">
+                    <li class="nav-item">
+                      <a href="#tabs-home-ex5" class="nav-link active" data-bs-toggle="tab"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
+                        Round #1
+                      </a>
+                      
+                    </li>
+                    <li class="nav-item">
+                      <a href="#tabs-profile-ex5" class="nav-link" data-bs-toggle="tab"><!-- Download SVG icon from http://tabler-icons.io/i/user -->
+                        Round #2
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="#tabs-activity-ex5" class="nav-link" data-bs-toggle="tab"><!-- Download SVG icon from http://tabler-icons.io/i/activity -->
+                        Round #3
+                      </a>
+                      
+                    </li>
+                  </ul>
+                </div>
+                <div class="card-body">
+                  <div class="tab-content">
+                    <div class="tab-pane active show" id="tabs-home-ex5">
+                      <div class="card">
+                        <div class="table-responsive">
+                          <table class="table table-vcenter card-table">
+                            <thead>
+                              <tr>
+                                <th>Lobby</th>
+                                <th>Participantes</th>
+                                <th>Date</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for lobby in info.lobbies %}
+                              <tr>
+                                <td>
+                                  <a class="nav-link" href="{{ url_for('lobby')}}">{{lobby.name}}</a>
+                                </td>
+                                <td>
+                                  {% for summoner in lobby.summoners%}
+                                  <span class="avatar me-2" style="background-image: url({{ url_for('static', path=summoner.icon) }})">
+                                  </span>
+                                  {% endfor %}
+                                </td>
+                                <td>
+                                  {{lobby.date}}
+                                </td>
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="tab-pane" id="tabs-profile-ex5">
+                      <div class="card">
+                        work in progress
+                      </div>
+                    </div>
+                    <div class="tab-pane" id="tabs-activity-ex5">
+                      <div class="card">
+                        work in progress
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      {% include 'footer.html' %}
+      
+    </div>
+  </div>
+  <!-- Libs JS -->
+  <script src="./dist/libs/apexcharts/dist/apexcharts.min.js?1668288743" defer=""></script>
+  <script src="./dist/libs/jsvectormap/dist/js/jsvectormap.min.js?1668288743" defer=""></script>
+  <script src="./dist/libs/jsvectormap/dist/maps/world.js?1668288743" defer=""></script>
+  <script src="./dist/libs/jsvectormap/dist/maps/world-merc.js?1668288743" defer=""></script>
+  <!-- Tabler Core -->
+  <script src="./dist/js/tabler.min.js?1668288743" defer=""></script>
+  <script src="./dist/js/demo.min.js?1668288743" defer=""></script>
+
+
+</html>
