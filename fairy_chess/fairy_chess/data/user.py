@@ -4,10 +4,10 @@ from jose import jwe
 
 from fairy_chess.config import API_KEY
 from fairy_chess.data import user_base
-from fairy_chess.services.riot import get_summoner
+from fairy_chess.services.riot import Riot
 
 def put(name: str, email: str, password: str, summoner: str, user_id=str(uuid4())):
-    summoner_info: dict = get_summoner(summoner)
+    summoner_info: dict = Riot().get_summoner(summoner)
     user_base.put(
         {
             "email": email,

@@ -12,7 +12,7 @@ from fastapi import FastAPI, Depends, Form, Response
 import fairy_chess.data.user as user_data
 import fairy_chess.data.session as session_data
 
-from fairy_chess.services.riot import get_icon
+from fairy_chess.services.riot import Riot
 
 from fairy_chess.data.lobby import get_lobby
 from fairy_chess.data.match import get_matches
@@ -40,7 +40,7 @@ async def match(request: Request):
     context["info"] = get_matches()
     if session_data.get_current(request.client.host):
         user: dict = user_data.get(session_data.get_current(request.client.host).get("value"))
-        context["user"] = {"name": user.get("name"), "icon": get_icon(user["puuid"])}
+        context["user"] = {"name": user.get("name"), "icon": Riot().get_icon(user["puuid"])}
 
     return templates.TemplateResponse("match.html", context.data)
 
