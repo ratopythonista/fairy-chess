@@ -2,9 +2,10 @@ from uuid import uuid4
 
 from jose import jwe
 
-from fairy_chess.config import API_KEY
 from fairy_chess.data import user_base
+from fairy_chess.config import API_KEY
 from fairy_chess.services.riot import Riot
+
 
 def put(name: str, email: str, password: str, summoner: str, user_id=str(uuid4())):
     summoner_info: dict = Riot().get_summoner(summoner)
@@ -13,10 +14,11 @@ def put(name: str, email: str, password: str, summoner: str, user_id=str(uuid4()
             "email": email,
             "name": name,
             "password": jwe.encrypt(password, API_KEY, algorithm='dir', encryption='A128GCM').decode(),
-            "puuid": summoner_info.get("puuid")
+            "summoner": summoner_info
         },
         key=user_id
     )
+    return True
     
 def get(user_id: str):
     return user_base.get(user_id)

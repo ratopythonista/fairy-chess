@@ -6,12 +6,12 @@ here = pathlib.Path(__file__).parent.resolve()
 long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
-    name="fairy-chess",
-    version="0.1.0",
+    name="fairy_chess",
+    version="1.0.0",
     description="Teamfight Tactics Tournaments Building and Hosting",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pypa/sampleproject",
+    url="",
     author="Rodrigo Guimarães Araújo",
     author_email="rodrigoara27@gmail.com",
     classifiers=[ 
@@ -21,14 +21,13 @@ setup(
         "License :: OSI Approved :: GNU GENERAL PUBLIC LICENSE",
         "Programming Language :: Python :: 3.9",
     ],
-    keywords="sample, setuptools, development",
-    packages=find_packages(where="fairy_chess"),
-    package_dir={'': 'fairy_chess'},
+    include_package_data=True,
+    packages=find_packages(exclude="tests"),
+    zip_safe=False,
     python_requires=">=3.9",
-    install_requires=(here / "fairy_chess/requirements.txt").read_text(encoding="utf-8").split("/n"),
+    install_requires=(here / "requirements.txt").read_text(encoding="utf-8").split("/n"),
     extras_require={
         "dev": ["black>=22.10.0", "pylama>=8.4.1"],
         "test": ["pytest>=7.2.0", "pytest-cov>=4.0.0"],
     },
-    package_data={'templates': ['*.html']},
 )

@@ -5,9 +5,10 @@ from dataclasses import dataclass
 import requests
 from riotwatcher import TftWatcher
 
+from fairy_chess.config import RIOT_KEY
 from fairy_chess.data import icon_driver
 
-RIOT_KEY = os.getenv("RIOT_KEY")
+
 @dataclass
 class Riot():
     watcher = TftWatcher(RIOT_KEY)
@@ -17,9 +18,8 @@ class Riot():
         return self.watcher.summoner.by_name("br1", name)
 
 
-    def get_icon(self, puuid):
-        user: dict = self.watcher.summoner.by_puuid("br1", puuid)
-        image_name = f"{user.get('profileIconId')}.png"
+    def get_icon(self, profile_icon_id: int):
+        image_name = f"{profile_icon_id}.png"
 
         image_data = icon_driver.get(image_name)
         if image_data:
@@ -28,4 +28,4 @@ class Riot():
             image_data = requests.get(f"{self.ddragon}/img/profileicon/{image_name}").content
             icon_driver.put(image_name, image_data)
         
-        return b64encode(image_data).decode()
+        return f"data:image/png;base64, {b64encode(image_data).decode()}"

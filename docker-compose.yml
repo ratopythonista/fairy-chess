@@ -4,13 +4,13 @@ services:
     image: ratopythonista/fairy_chess:latest
     build: ./
     container_name: fairy_chess
-    command: bash -c "gunicorn --workers=1 --worker-class=uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000 --timeout=360000 main:app"
+    command: bash -c "python fairy_chess"
     env_file:
-      - fairy_chess/.env
+      - .env
     ports:
       - "8000:8000"
     volumes:
-      - ./fairy_chess:/fairy_chess
+      - .:/fairy_chess
     networks:
       - fairy-chess-network
 
