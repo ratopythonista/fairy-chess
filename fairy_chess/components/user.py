@@ -19,19 +19,21 @@ login_bar = html.Div(
 def build_user_bar(user_info: dict):
     summoner_info: dict = user_info.get("summoner")
     icon = Riot().get_icon(summoner_info.get("profileIconId"))
-    return [
-            html.Div(
-                html.A(html.Img(src='/assets/logout.svg', height="30px"), id="logout"),
-                className="nav-item d-none d-md-flex"
-            ),
-            html.Div(
+    return html.Div(
                 [
-                    html.Img(className="avatar avatar-sm", src=icon),
+                    html.A(
+                        [
+                            html.Img(className="avatar avatar-sm", src=icon),
+                            html.Div(
+                                [html.Div(user_info.get("name")), html.Div(summoner_info.get("name"), className="mt-1 small text-muted")],
+                                
+                            )
+                        ], className="nav-link d-flex lh-1 text-reset p-0", **{"data-bs-toggle": "dropdown"}
+                    ),
                     html.Div(
-                        [html.Div(user_info.get("name")), html.Div(summoner_info.get("name"), className="mt-1 small text-muted")],
-                        className="d-none d-xl-block ps-2"
+                        html.A("logout", id="logout", href="#", className="dropdown-item"),
+                        className="dropdown-menu dropdown-menu-end dropdown-menu-arrow"
                     )
                 ],
-                className="nav-link d-flex lh-1 text-reset p-0"
-            ),
-        ]
+                className="nav-item dropdown"
+            )
