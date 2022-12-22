@@ -1,9 +1,11 @@
-deta==1.1.0
 dash==2.7.0
+pony==0.7.16
+redis==4.4.0
 loguru==0.6.0
 uptrace==1.14.0
 riotwatcher==3.2.4
 python-jose==3.3.0
 cryptography==38.0.4
+ak-minio==5.0.7.post2
 python-dotenv==0.21.0
 dash-bootstrap-components==1.2.1
