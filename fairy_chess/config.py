@@ -1,5 +1,14 @@
 import os
 
+UPTRACE_DSN = os.getenv("UPTRACE_DSN")
 API_KEY = os.getenv("API_KEY")
 RIOT_KEY = os.getenv("RIOT_KEY")
 PROJECT_KEY = os.getenv("PROJECT_KEY") 
+
+POSTGRESS_USER=os.getenv("POSTGRESS_USER") 
+POSTGRESS_PASS=os.getenv("POSTGRESS_PASS") 
+POSTGRESS_DATA=os.getenv("POSTGRESS_DATA") 
+POSTGRESS_HOST=os.getenv("POSTGRESS_HOST") 
+
+REDIS_HOST=os.getenv("REDIS_HOST")
+REDIS_EXP_TIME=os.getenv("REDIS_EXP_TIME")

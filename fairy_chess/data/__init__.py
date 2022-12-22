@@ -6,7 +6,6 @@ from pony.orm import *
 
 db = Database()
 
-
 class User(db.Entity):
     id = PrimaryKey(UUID, auto=True)
     email = Optional(str)
@@ -91,3 +90,6 @@ class Tournament(db.Entity):
     name = Required(str)
     start_date = Required(datetime)
     lobbys = Set(Lobby)
+
+
+sql_debug(True)

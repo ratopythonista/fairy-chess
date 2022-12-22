@@ -5,8 +5,8 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
 
-from fairy_chess.data.user import authenticate
 from fairy_chess.data import session
+from fairy_chess.data.user import authenticate
 
 def login_callbacks(app: Dash):
     @app.callback(

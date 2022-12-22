@@ -6,7 +6,6 @@ import requests
 from riotwatcher import TftWatcher
 
 from fairy_chess.config import RIOT_KEY
-from fairy_chess.data import icon_driver
 
 
 @dataclass
@@ -21,11 +20,11 @@ class Riot():
     def get_icon(self, profile_icon_id: int):
         image_name = f"{profile_icon_id}.png"
 
-        image_data = icon_driver.get(image_name)
-        if image_data:
-            image_data = image_data.read()
-        else:
-            image_data = requests.get(f"{self.ddragon}/img/profileicon/{image_name}").content
-            icon_driver.put(image_name, image_data)
+        # image_data = icon_driver.get(image_name)
+        # if image_data:
+        #     image_data = image_data.read()
+        # else:
+        image_data = requests.get(f"{self.ddragon}/img/profileicon/{image_name}").content
+            # icon_driver.put(image_name, image_data)
         
         return f"data:image/png;base64, {b64encode(image_data).decode()}"

@@ -1,9 +1,6 @@
-from flask import request
-
-from dash import Input, Output, Dash
-import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
+from dash import Input, Output, Dash, dcc
 
 from fairy_chess.data import user
 

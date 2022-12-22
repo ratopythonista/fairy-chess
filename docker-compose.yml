@@ -34,7 +34,11 @@ services:
     container_name: fairy-chess-minio
     environment:
       MINIO_ROOT_USER: fairyc
-      MINIO_ROOT_PASSWORD: fc123
+      MINIO_ROOT_PASSWORD: fairychess123
+    ports:
+      - "9000:9000"
+      - "9090:9090"
+    command: server --console-address ":9090" /data 
     volumes:
      - /var/data/minio:/data
     networks:
@@ -46,7 +50,7 @@ services:
     restart: always
     ports:
       - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    command: redis-server
     volumes: 
       - /var/data/redis:/data
     networks:

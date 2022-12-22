@@ -8,4 +8,5 @@ python-jose==3.3.0
 cryptography==38.0.4
 ak-minio==5.0.7.post2
 python-dotenv==0.21.0
+psycopg2-binary==2.9.5
 dash-bootstrap-components==1.2.1
