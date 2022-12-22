@@ -3,6 +3,7 @@ from dash import html
 import dash_core_components as dcc
 
 from fairy_chess import app
+from fairy_chess.data import db
 from fairy_chess.components.navbar import navbar
 from fairy_chess.resources import login_callbacks, session_callbacks, register_callbacks
 
@@ -17,5 +18,7 @@ app.layout = html.Div([
 login_callbacks(app)
 session_callbacks(app)
 register_callbacks(app)
+
+db.generate_mapping()
 
 app.run()

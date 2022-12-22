@@ -91,7 +91,3 @@ class Tournament(db.Entity):
     name = Required(str)
     start_date = Required(datetime)
     lobbys = Set(Lobby)
-
-
-
-db.generate_mapping()
