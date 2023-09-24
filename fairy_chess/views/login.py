@@ -5,7 +5,7 @@ from fairy_chess.controllers.user import UserController
 
 class LoginPage:
     def __init__(self, page: Page):
-        self.page = page          
+        self.page = page   
 
         self.logo = Image(
             src="https://i.ibb.co/bbBSyLC/fairychess-logo-v0.png",
@@ -25,4 +25,4 @@ class LoginPage:
         self.page.update()
 
     def login(self, e):
-        pass
+        user = UserController.login(self.username.value, self.password.value)
