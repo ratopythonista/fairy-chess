@@ -1,5 +1,7 @@
-from loguru import logger
 from flet import Page, TextField, ElevatedButton, Column, Image, ImageFit
+
+from fairy_chess.controllers.user import UserController
+
 
 class RegistrationPage:
     def __init__(self, page: Page):
@@ -20,4 +22,4 @@ class RegistrationPage:
         self.page.add(Column(controls=[self.logo, self.username, self.email, self.password, self.summoner_name, self.submit_button]))     
                  
     def submit_registration(self, e):
-        logger.debug(f"Textboxes values are:  '{self.username.value}', '{self.email.value}', '{self.password.value}', '{self.summoner_name.value}'.")
+        UserController.register(self.email.value, self.username.value, self.password.value, self.summoner_name.value)
