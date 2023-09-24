@@ -23,3 +23,5 @@ class RegistrationPage:
                  
     def submit_registration(self, e):
         UserController.register(self.email.value, self.username.value, self.password.value, self.summoner_name.value)
+        self.page.route = "/login"
+        self.page.update()
