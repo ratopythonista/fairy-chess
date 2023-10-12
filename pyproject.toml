@@ -6,13 +6,13 @@ build-backend = "setuptools.build_meta"
 name = "fairychess"
 version = "0.1.0"
 dependencies = [
-    "flet==0.10.1",
+    "flet",
     "loguru==0.7.0",
     "peewee==3.16.3",
+    "supabase",
     "riotwatcher==3.2.5",
     "cryptography==41.0.4",
     "python-dotenv==1.0.0",
-    "psycopg2-binary==2.9.6",
 ]
 authors = [
   { name="Rato Pythonista", email="ratopythonista@gmail.com" },

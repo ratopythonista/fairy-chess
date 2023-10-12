@@ -11,3 +11,4 @@ class RiotClient:
     def get_puuid(self, summoner_name: str):
         user: dict = self.lol_watcher.summoner.by_name(self.my_region, summoner_name)
         return user.get('puuid')
+    

@@ -13,15 +13,13 @@ class RegistrationPage:
             height=100,
             fit=ImageFit.CONTAIN,
         )
-        self.username = TextField(label="Username")
         self.email = TextField(label="Email")
         self.password = TextField(label="Password", password=True, can_reveal_password=True)
         self.summoner_name = TextField(label="Summoner Name")
         self.submit_button = ElevatedButton(text="Registrar", on_click=self.submit_registration)
 
-        self.page.add(Column(controls=[self.logo, self.username, self.email, self.password, self.summoner_name, self.submit_button]))     
-                 
+        self.page.add(Column(controls=[self.logo, self.email, self.password, self.summoner_name, self.submit_button]))     
     def submit_registration(self, e):
-        UserController.register(self.username.value, self.email.value, self.password.value, self.summoner_name.value)
+        UserController.register(self.email.value, self.password.value, self.summoner_name.value)
         self.page.route = "/login"
         self.page.update()
