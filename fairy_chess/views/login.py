@@ -19,10 +19,17 @@ class LoginPage:
         self.submit_button = ElevatedButton(text="Registrar", on_click=self.go_registration)
 
         self.page.add(Column(controls=[self.logo, self.username, self.password, self.login_button, self.submit_button]))     
-                 
+
     def go_registration(self, e):
         self.page.route = "/registration"
         self.page.update()
 
-    def login(self, e):
-        user = UserController.login(self.username.value, self.password.value)
+    def login(self, e):    
+        if user := UserController.login(self.username.value, self.password.value):
+            summoner, validated, icon = user
+            self.page.session.set("icon", icon)
+            self.page.session.set("summoner", summoner)
+            self.page.session.set("validated", validated)
+            self.page.route = "/user"
+            self.page.update()
+        

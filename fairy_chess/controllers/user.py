@@ -16,6 +16,7 @@ class UserController:
                 "options": {
                     "data": {
                         "summoner_puuid": summoner_puuid,
+                        "validated": False
                     }
                 }
             })
@@ -25,7 +26,18 @@ class UserController:
 
     def login(email: str, password: str):
         data = supabase.auth.sign_in_with_password({"email": email, "password": password})
-        logger.info(data.user.user_metadata.get("summoner_puuid"))
-        return data
+        
+        riot_client = RiotClient()
+        
+        summoner_data = riot_client.get_summoner_by_puuid(data.user.user_metadata.get("summoner_puuid"))
+        
+        
+        
+        summoner = summoner_data.get("name")
+        validated = data.user.user_metadata.get("validated")
+        icon = riot_client.get_icon(summoner_data.get("profileIconId"))
+        
+        logger.info(icon)
+        return summoner, validated, icon
 
 
