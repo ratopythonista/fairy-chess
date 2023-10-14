@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fairychess"
+version = "0.1.0"
+dependencies = [
+    "loguru==0.7.0",
+    "uvicorn==0.23.2",
+    "supabase==1.2.0",
+    "requests==2.31.0",
+    "fastapi==0.103.2",
+    "cryptography==41.0.4",
+    "python-dotenv==1.0.0",
+]
+authors = [
+  { name="Rato Pythonista", email="ratopythonista@gmail.com" },
+]
+description = "Fairy Chess - TFT Tournment"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/ratopythonista/fairy-chess"
+"Bug Tracker" = "https://github.com/ratopythonista/fairy-chess/issues"
