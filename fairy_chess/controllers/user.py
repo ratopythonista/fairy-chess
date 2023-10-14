@@ -1,43 +1,30 @@
 from loguru import logger
 
-from fairy_chess.services.riot import RiotClient
-from fairy_chess.services.supabase_service import supabase
+from fairy_chess.services.riot_api import TFTAPI
+from fairy_chess.services.supabase_api import SupabaseAPI
+
+from fairy_chess.database.user import RiotUser, User
 
 from gotrue.errors import AuthApiError
 
 class UserController:
+    supabase: SupabaseAPI = SupabaseAPI()
 
-    def register(email: str, password: str, summoner_name: str):
+    def register(self, user: User):
         try:
-            summoner_puuid = RiotClient().get_puuid(summoner_name)
-            data = supabase.auth.sign_up({
-                "email": email,
-                "password": password,
-                "options": {
-                    "data": {
-                        "summoner_puuid": summoner_puuid,
-                        "validated": False
-                    }
-                }
-            })
-            return data
+            return UserController.supabase.create_user(user.email, user.password, user.summoner_name)
         except AuthApiError as err:
-            logger.error(f"Error registering user {email}:  {err.message}")
+            logger.error(f"Error registering user {user.email}:  {err.message}")
 
-    def login(email: str, password: str):
-        data = supabase.auth.sign_in_with_password({"email": email, "password": password})
-        
-        riot_client = RiotClient()
-        
-        summoner_data = riot_client.get_summoner_by_puuid(data.user.user_metadata.get("summoner_puuid"))
-        
-        
-        
-        summoner = summoner_data.get("name")
-        validated = data.user.user_metadata.get("validated")
-        icon = riot_client.get_icon(summoner_data.get("profileIconId"))
-        
-        logger.info(icon)
-        return summoner, validated, icon
+    def login(self, user: User):
+        return UserController.supabase.login(user.email, user.password)
 
 
+    def get_summoner_data(self) -> RiotUser:
+        summoner_name = UserController.supabase.get_current_user()
+        tft_api = TFTAPI(summoner_name)
+        icon_id = tft_api.get_icon()
+        rank, tier = tft_api.get_ranking()
+        icon_url = UserController.supabase.get_icon(icon_id)
+        rank_icon_url = UserController.supabase.get_rank_icon(rank)
+        return RiotUser(summoner_name=summoner_name, icon=icon_url, rank=f"{rank} {tier}", rank_icon=rank_icon_url)
