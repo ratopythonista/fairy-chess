@@ -1,3 +1,4 @@
+from pydantic import BaseModel
 from fastapi import HTTPException
 
 from fairy_chess.controllers.token import Token
@@ -5,8 +6,9 @@ from fairy_chess.database.tournment import TournmentModel, tournment_repository
 
 
 class TournmentController:
-    def __init__(self, tournment: TournmentModel, token: Token) -> None:
-        self.tournment: TournmentModel = TournmentModel(**tournment.model_dump())
+    def __init__(self, token: Token, tournment: BaseModel = None) -> None:
+        if tournment:
+            self.tournment: TournmentModel = TournmentModel(**tournment.model_dump())
         self.token = token
 
     def create(self):
@@ -19,5 +21,12 @@ class TournmentController:
             return self.tournment.model_dump()
         raise HTTPException(status_code=403, detail="Tournemt alredy exists")
 
-    def fetch() -> list[dict]:
+    def fetch(self) -> list[dict]:
         return [tournment.model_dump() for tournment in tournment_repository.fetch()]
+
+    def register(self, tournment_id: str):
+        tournment_base = tournment_repository.find_one_by_id(tournment_id)
+        if tournment_base:
+            self.tournment.competitors.append(
+                {"riot_id": self.token.riot_id, "points": 0}
+            )

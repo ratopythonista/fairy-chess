@@ -28,10 +28,14 @@ def create(
     x_token: Annotated[str, Header()] = None,
     tournment: Annotated[tournmentRegisterRequest, Body(..., description="Tournemt Register Request")] = None 
 ):
-    return TournmentController(tournment, Token.decode(x_token)).create()
+    return TournmentController(Token.decode(x_token), tournment).create()
 
 
 @tournment_router.get('/')
 def fetch(x_token: Annotated[str, Header()] = None,):
-    Token.decode(x_token)
-    return TournmentController.fetch()
+    return TournmentController(Token.decode(x_token)).fetch()
+
+
+@tournment_router.post('/register')
+def register(x_token: Annotated[str, Header()] = None,):
+    return TournmentController(Token.decode(x_token)).register()
