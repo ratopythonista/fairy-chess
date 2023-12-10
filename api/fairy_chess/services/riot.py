@@ -24,7 +24,7 @@ class Riot:
     def icon(self):
         response: dict = self.__request(f"{TFT_SUMMONER_PATH}/{self.puuid}")
         icon_id, self.summoner_id = map(response.get, ["profileIconId", "id"])
-        return icon_id
+        return str(icon_id)
 
     @property
     def rank(self):

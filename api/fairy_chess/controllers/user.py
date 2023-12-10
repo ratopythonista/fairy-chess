@@ -6,7 +6,7 @@ from fairy_chess.database.user import user_repository, UserModel
 
 class UserController:
     def __init__(self, user: UserModel) -> None:
-        self.user: UserModel = user
+        self.user: UserModel = UserModel(**user.model_dump())
 
     def register(self):
         base_user = user_repository.find_by_riot_id(self.user.riot_id)

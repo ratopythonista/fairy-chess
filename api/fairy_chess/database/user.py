@@ -25,16 +25,16 @@ class UserModel(BaseModel):
     
     @field_validator("password")
     @classmethod
-    def validate_password(cls, password: str) -> str:
+    def validate_password(cls, password: str | bytes) -> str:
         regex = r'[\d|\w|]{8,}'
         if isinstance(password, bytes):
-            return password
+            return password        
         elif re.fullmatch(regex, password):
-            return hmac.new(HASH_KEY.encode(), password.encode(), 'sha256').digest()
+            return hmac.new(HASH_KEY.encode(), password.encode(), 'sha256').digest()        
         raise HTTPException(403, "Invalid password")
     
     def __eq__(self, other: 'UserModel') -> bool:
-        return self.email == other.email and self.password == other.password
+        return self.email == other.email and hmac.compare_digest(self.password, other.password) 
 
 
 class UserRepository(AbstractRepository[UserModel]):

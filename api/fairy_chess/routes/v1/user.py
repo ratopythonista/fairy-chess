@@ -14,15 +14,15 @@ class UserRegisterRequest(BaseModel):
 
 
 @user_router.post('/register')
-def register(user: UserModel = Body(..., description="User Registration Information")):
+def register(user: UserRegisterRequest = Body(..., description="User Registration Information")):
     return {"access_token": UserController(user).register()}
 
 
-class UserRegisterRequest(BaseModel):
+class UserLoginRequest(BaseModel):
     email: str = Field(..., description="User email")
     password: str = Field(..., description="User password")
 
 
 @user_router.post('/login')
-def login(user: UserModel = Body(..., description="User Login Information")):
+def login(user: UserLoginRequest = Body(..., description="User Login Information")):
     return {"access_token": UserController(user).login()}

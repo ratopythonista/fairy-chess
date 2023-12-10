@@ -9,7 +9,7 @@ from fairy_chess.database.user import UserModel
 
 class Token(BaseModel):
     riot_id: str
-    icon_id: str
+    icon_id: str | int
     current_rank: str
 
     def new(user: UserModel):
@@ -17,12 +17,17 @@ class Token(BaseModel):
         
         icon_id: str = riot.icon
         current_rank: str = riot.rank
-        expires_at = datetime.now() + timedelta(minutes=5)
-        payload = {"riot_id": user.riot_id, "icon_id": icon_id, "current_rank": current_rank, "expires_at": expires_at}
+        expires_at = datetime.now() + timedelta(hours=12)
+        payload = {
+            "icon_id": icon_id,
+            "riot_id": user.riot_id,
+            "current_rank": current_rank,
+            "expires_at": expires_at.timestamp()
+        }
         return jwt.encode(payload, JWT_KEY, algorithm="HS256")
     
     def decode(token: str):
-        payload: dict = jwt.decode(token)
-        if payload.get("exires_at") > datetime.now():
+        payload: dict = jwt.decode(token, JWT_KEY, algorithms=["HS256"])
+        if payload.get("expires_at") < datetime.now().timestamp():
             raise HTTPException(403, "Token expired")
-        return Token(payload)
+        return Token(**payload)
