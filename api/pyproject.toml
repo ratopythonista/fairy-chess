@@ -6,11 +6,12 @@ build-backend = "setuptools.build_meta"
 name = "fairychess"
 version = "0.1.0"
 dependencies = [
+    "pyjwt==2.8.0",
     "loguru==0.7.0",
     "uvicorn==0.23.2",
     "requests==2.31.0",
     "fastapi==0.103.2",
-    "cryptography==41.0.4",
+    "pycryptodome==3.19.0",
     "python-dotenv==1.0.0",
     "pydantic-mongo==2.0.3",
 ]

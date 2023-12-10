@@ -1,21 +1,28 @@
+from pydantic import BaseModel, Field
+
 from fastapi import APIRouter, Body
-from loguru import logger
-from fairy_chess.database.user import User, RiotUser
+from fairy_chess.database.user import UserModel
 from fairy_chess.controllers.user import UserController
 
 user_router = APIRouter(prefix="/user", tags=["admin"])
 
 
+class UserRegisterRequest(BaseModel):
+    email: str = Field(..., description="User email")
+    password: str = Field(..., description="User password")
+    riot_id: str = Field('', description="User riot id (name#id)")
+
+
 @user_router.post('/register')
-def register(user_data: User = Body(..., description="User Registration Information")):
-    logger.debug(user_data)
-    return {"access_token": UserController().register(user_data)}
+def register(user: UserModel = Body(..., description="User Registration Information")):
+    return {"access_token": UserController(user).register()}
+
+
+class UserRegisterRequest(BaseModel):
+    email: str = Field(..., description="User email")
+    password: str = Field(..., description="User password")
 
 
 @user_router.post('/login')
-def login(user_data: User = Body(..., description="User Login Information")):
-    return {"access_token": UserController().login(user_data)}
-
-@user_router.get('/')
-def get_summoner_data():
-    return UserController().get_summoner_data()
+def login(user: UserModel = Body(..., description="User Login Information")):
+    return {"access_token": UserController(user).login()}
