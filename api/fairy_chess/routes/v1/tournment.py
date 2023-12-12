@@ -36,6 +36,6 @@ def fetch(x_token: Annotated[str, Header()] = None,):
     return TournmentController(Token.decode(x_token)).fetch()
 
 
-@tournment_router.post('/register')
-def register(x_token: Annotated[str, Header()] = None,):
-    return TournmentController(Token.decode(x_token)).register()
+@tournment_router.post('/register/{tournment_id}')
+def register(tournment_id: str, x_token: Annotated[str, Header()] = None,):
+    return TournmentController(Token.decode(x_token)).register(tournment_id)

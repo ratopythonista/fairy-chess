@@ -12,7 +12,13 @@ class Riot:
 
     def __request(self, path: str) -> dict:
         headers = {"Content-Type": "application/json", "X-Riot-Token": RIOT_API_KEY}
-        return requests.get(path, headers=headers).json()
+        from loguru import logger
+        
+
+        response = requests.get(path, headers=headers).json()
+        logger.debug(path)
+        logger.debug(response)
+        return response
 
     @property
     def puuid(self) -> int:
