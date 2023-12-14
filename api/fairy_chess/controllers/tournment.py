@@ -15,8 +15,6 @@ class TournmentController:
 
     def create(self):
         tournment_base = tournment_repository.find_by_name(self.tournment.name)
-        from loguru import logger
-        logger.debug(tournment_base)
         if not tournment_base:
             self.tournment.creator_id = self.token.riot_id
             tournment_repository.save(self.tournment)
