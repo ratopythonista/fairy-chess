@@ -43,7 +43,7 @@ class RoundModel(BaseModel):
     
 
     def __eq__(self, other: 'RoundModel') -> bool:
-        return self.name == other.name
+        return self.name == other.name and self.tournment_id == other.tournment_id
 
 
 class RoundRepository(AbstractRepository[RoundModel]):
