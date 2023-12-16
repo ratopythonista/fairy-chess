@@ -1,13 +1,32 @@
 from bson import ObjectId
+from collections import Counter
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, computed_field
 from pydantic_mongo import ObjectIdField, AbstractRepository
 
 from fairy_chess.database import database
 
 class RoundClassificationModel(BaseModel):
     riot_id: str = Field(..., description="Participant Id")
-    points: int = Field(0, description="Round points")
+    placement: list[int] = Field([], description="Round placements")
+
+    @computed_field(description="Round Points")
+    @property
+    def points(self) -> int:
+        return sum([9-place for place in self.placement])
+    
+    def __gt__(self, other: 'RoundClassificationModel'):
+        self_placement_count = Counter(self.placement)
+        other_placement_count = Counter(other.placement)
+        if self.points > other.points:
+            return True
+        elif self.points == other.points:
+            place = 1
+            while self_placement_count.get(place, 0) == other_placement_count.get(place, 0):
+                place += 1
+                if place == 9:
+                    break
+            return self_placement_count.get(place, 0) > other_placement_count.get(place, 0)
 
 class RoundModel(BaseModel):
     id: ObjectIdField = None
@@ -39,9 +58,10 @@ class RoundRepository(AbstractRepository[RoundModel]):
         return super().find_one_by_id(ObjectId(round_id))
     
     def find_previous(self, round: RoundModel) -> RoundModel:
-        round_base = self.find_one_by({"tournment_id": round.tournment_id, "order": round.tournment_id-1})
-        competitors = sorted(round_base.competitors, lambda x: x.points)[:round.qty_advance]
-        
+        previous_round = self.find_one_by({"tournment_id": round.tournment_id, "order": round.order-1})
+        return sorted(
+            [competitor for competitor in previous_round.competitors], reverse=True
+        )[:previous_round.qty_advance]
 
     class Meta:
         collection_name = 'round'
