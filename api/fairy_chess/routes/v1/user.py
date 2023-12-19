@@ -1,28 +1,28 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
-from fastapi import APIRouter, Body
-from fairy_chess.database.user import UserModel
+from fastapi import APIRouter
+
+from fairy_chess.controllers.token import JWT
 from fairy_chess.controllers.user import UserController
 
 user_router = APIRouter(prefix="/user", tags=["admin"])
 
 
-class UserRegisterRequest(BaseModel):
-    email: str = Field(..., description="User email")
-    password: str = Field(..., description="User password")
-    riot_id: str = Field('', description="User riot id (name#id)")
+class RegisterModel(BaseModel):
+    email: str
+    password: str
+    riot_id: str
 
 
 @user_router.post('/register')
-def register(user: UserRegisterRequest = Body(..., description="User Registration Information")):
-    return {"access_token": UserController(user).register()}
+def register(body: RegisterModel):
+    return {"access_token": UserController.register(**body.model_dump())}
 
 
-class UserLoginRequest(BaseModel):
-    email: str = Field(..., description="User email")
-    password: str = Field(..., description="User password")
-
+class RegisterModel(BaseModel):
+    email: str
+    password: str
 
 @user_router.post('/login')
-def login(user: UserLoginRequest = Body(..., description="User Login Information")):
-    return {"access_token": UserController(user).login()}
+def login(body: RegisterModel):
+    return {"access_token": UserController.login(**body.model_dump())}

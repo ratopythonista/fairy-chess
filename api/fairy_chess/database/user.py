@@ -7,13 +7,14 @@ from pydantic_mongo import ObjectIdField, AbstractRepository
 
 from fairy_chess.config import HASH_KEY
 from fairy_chess.database import database
-
+from fairy_chess.services.riot import Summoner
 
 class UserModel(BaseModel):
     id: ObjectIdField = None
     email: str = Field(..., description="User email")
     password: str | bytes = Field(..., description="User password")
-    riot_id: str = Field('', description="User riot id (name#id)")
+    summoner: Summoner = Field(..., description="LoL Summoner")
+
     
     @field_validator("email")
     @classmethod
@@ -32,15 +33,12 @@ class UserModel(BaseModel):
         elif re.fullmatch(regex, password):
             return hmac.new(HASH_KEY.encode(), password.encode(), 'sha256').digest()        
         raise HTTPException(403, "Invalid password")
-    
-    def __eq__(self, other: 'UserModel') -> bool:
-        return self.email == other.email and hmac.compare_digest(self.password, other.password) 
 
 
 class UserRepository(AbstractRepository[UserModel]):
    
-    def find_by_riot_id(self, riot_id: str):
-        return self.find_one_by({"riot_id": riot_id})
+    def find_by_riot_id(self, puuid: str):
+        return self.find_one_by({"summoner.puuid": puuid})
 
     def find_by_email(self, email: str):
         return self.find_one_by({"email": email})
