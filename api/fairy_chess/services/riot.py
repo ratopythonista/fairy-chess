@@ -59,9 +59,11 @@ class RiotService():
             response = self.session.get(Endpoint.PUUID.format(riot_id.name, riot_id.tag))
             puuid_response: dict = response.json()
 
+            logger.debug(puuid_response)
             response = self.session.get(Endpoint.SUMMONER.format(puuid_response.get("puuid")))
             summoner_response: dict = response.json()
 
+            logger.debug(summoner_response)
             response = self.session.get(Endpoint.RANK.format(summoner_response.get("id")))
             tft_rank: TFTRank = TFTRank()
 
