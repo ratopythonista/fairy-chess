@@ -5,16 +5,12 @@ from pydantic_mongo import ObjectIdField, AbstractRepository
 
 from fairy_chess.database import database
 
-class TourmentClassificationModel(BaseModel):
-    riot_id: str = Field(..., description="Participant Id")
-    points: int = Field(0, description="Tournment points")
-
 class TournmentModel(BaseModel):
     id: ObjectIdField = None
     name: str = Field(..., description="Tournment Name")
     starts_at: float = Field(..., description="Tournment start date")
-    creator_id: str = Field('', description="User create riot id")
-    competitors: list[TourmentClassificationModel] = Field([], description="Tourment Competitors")
+    creator_id: str = Field(..., description="User create riot id")
+    competitors: list[str] = Field([], description="Tourment Competitors")
 
     def __eq__(self, other: 'TournmentModel') -> bool:
         return self.name == other.name

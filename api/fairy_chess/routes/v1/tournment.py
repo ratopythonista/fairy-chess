@@ -4,13 +4,13 @@ from datetime import datetime
 from pydantic import BaseModel, Field, field_validator
 from fastapi import APIRouter, Body, HTTPException, Header
 
-from fairy_chess.controllers.token import Token
+from fairy_chess.controllers.token import Token, JWT
 from fairy_chess.controllers.tournment import TournmentController   
 
 tournment_router = APIRouter(prefix="/tournemt", tags=["admin"])
 
 
-class tournmentRegisterRequest(BaseModel):
+class RegisterRequest(BaseModel):
     name: str = Field(..., description="User email")
     starts_at: float | str = Field(..., description="Date for Tournemt starts dd/mm/YYYY")
 
@@ -24,18 +24,18 @@ class tournmentRegisterRequest(BaseModel):
 
 
 @tournment_router.post('/create')
-def create(
-    x_token: Annotated[str, Header()] = None,
-    tournment: Annotated[tournmentRegisterRequest, Body(..., description="Tournemt Register Request")] = None 
-):
-    return TournmentController(Token.decode(x_token), tournment).create()
+def create(tournment: RegisterRequest = Body(), x_token: Annotated[str, Header()] = None):
+    jwt: JWT = Token.decode(x_token)
+    return TournmentController.create(**tournment.model_dump(), puuid=jwt.puuid)
 
 
 @tournment_router.get('/')
 def fetch(x_token: Annotated[str, Header()] = None,):
-    return TournmentController(Token.decode(x_token)).fetch()
+    jwt: JWT = Token.decode(x_token)
+    return TournmentController.fetch()
 
 
 @tournment_router.post('/register/{tournment_id}')
 def register(tournment_id: str, x_token: Annotated[str, Header()] = None,):
-    return TournmentController(Token.decode(x_token)).register(tournment_id)
+    jwt: JWT = Token.decode(x_token)
+    return TournmentController.register(tournment_id, jwt.puuid)
