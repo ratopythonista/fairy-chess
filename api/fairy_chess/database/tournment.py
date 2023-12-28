@@ -3,22 +3,21 @@ from bson import ObjectId
 from pydantic import BaseModel, Field
 from pydantic_mongo import ObjectIdField, AbstractRepository
 
-from fairy_chess.database import database  
-from fairy_chess.services.riot import Match
+from fairy_chess.database import database
 
 
-class Lobby(BaseModel):
-    name: str = Field(..., description="")
+class Match(BaseModel):
+    name: str = Field(..., description="Match Name")
     competitors: list[str] = Field(..., description="")
-    total_matches: int = Field(..., description="Quantity of matches")
-    matches: list[Match] = Field([], description="Matches for this lobby")
+    placement: list[int] = Field(..., description="")
+    stage: str = Field(..., description="Stage name")
 
 
-class Round(BaseModel):
-    name: str = Field(..., description="Round name")
-    qty_advance: int = Field(..., description="Players that advence to next round")
+class Stage(BaseModel):
+    name: str = Field(..., description="Stage name")
     competitors: list[str] = Field(..., description="")
-    lobbys: list[Lobby] = Field(..., description="Lobbys for this round")
+    pontuation: list[int] = Field(..., description="")
+    matches: list[Match] = Field([], description="Tourment Stages")
 
 
 class TournmentModel(BaseModel):
@@ -26,8 +25,7 @@ class TournmentModel(BaseModel):
     name: str = Field(..., description="Tournment Name")
     starts_at: float = Field(..., description="Tournment start date")
     creator_id: str = Field(..., description="User create riot id")
-    competitors: list[str] = Field([], description="Tourment Competitors")
-    rounds: list[Round] = Field([], description="Tourment Competitors")
+    stages: list[Stage] = Field([], description="Tourment Stages")
 
     def __eq__(self, other: 'TournmentModel') -> bool:
         return self.name == other.name
