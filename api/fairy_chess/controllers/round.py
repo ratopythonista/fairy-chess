@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from fastapi import HTTPException
 
 from fairy_chess.controllers.token import Token
-from fairy_chess.controllers.tournment import TournmentModel, tournment_repository
+from api.fairy_chess.controllers.contest import TournmentModel, tournment_repository
 from fairy_chess.database.round import (
     RoundModel, round_repository, RoundClassificationModel
 )
