@@ -1,13 +1,8 @@
-from datetime import datetime
-
 from sqlmodel import Session
 
 from fairy_chess.database import engine
 from fairy_chess.exceptions import ControllerException
-from fairy_chess.database.models.contest import Contest, ContestQuery
-
-
-
+from fairy_chess.database.models.contest import Contest, ContestUser, ContestQuery
 
 
 class ContestController:
@@ -31,10 +26,28 @@ class ContestController:
             exclude={"creator"} if user_id else {}
         )
 
-    # def register(tournment_id: str, puuid: str):
-    #     tournment_base = tournment_repository.find_one_by_id(tournment_id)
-    #     if tournment_base and puuid not in tournment_base.competitors:
-    #         tournment_base.competitors.append(puuid)
-    #         tournment_repository.save(tournment_base)
-    #         return tournment_base
-    #     raise HTTPException(status_code=403, detail="User alredy register in this tournment")
+    def competitors(self, contest_id: str, check_in: bool | None = None):
+        return [
+            user.model_dump(exclude={'password', 'id', 'email'}) 
+            for user in self.session.exec(ContestQuery.competitors(contest_id, check_in)).all()
+        ]
+
+    def register(self, contest_id: str, user_id: str):
+        try:
+            contest_user = ContestUser(contest_id=contest_id, user_id=user_id)
+            self.session.add(contest_user)
+            self.session.commit()
+            self.session.refresh(contest_user)
+            return contest_user.model_dump()
+        except:
+            raise ControllerException(status_code=403, detail="User alredy register in this tournment")
+
+
+    def check_in(self, contest_id: str, user_id: str):
+        contest_user = self.session.exec(ContestQuery.find_registred(contest_id, user_id)).first()
+        if contest_user and not contest_user.check_in:
+            contest_user.check_in = True
+            self.session.commit()
+            self.session.refresh(contest_user)
+            return contest_user.model_dump()
+        raise ControllerException(status_code=403, detail="Check In Error")

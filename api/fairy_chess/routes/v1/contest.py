@@ -24,7 +24,19 @@ def fetch(all: bool = False, x_token: Annotated[str, Header()] = None):
     return ContestController().fetch(user_id=None if all else user_id)
 
 
-# @contest_router.post('/register/{tournment_id}')
-# def register(tournment_id: str, x_token: Annotated[str, Header()] = None,):
-#     jwt: JWT = Token.decode(x_token)
-#     return TournmentController.register(tournment_id, jwt.puuid)
+@contest_router.get('/competitors/{contest_id}')
+def register(contest_id: str, check_in: bool = None, x_token: Annotated[str, Header()] = None,):
+    decode_token(x_token)
+    return ContestController().competitors(contest_id, check_in)
+
+
+@contest_router.post('/register/{contest_id}')
+def register(contest_id: str,  x_token: Annotated[str, Header()] = None,):
+    user_id = decode_token(x_token)
+    return ContestController().register(contest_id, user_id)
+
+
+@contest_router.post('/checkin/{contest_id}')
+def register(contest_id: str, x_token: Annotated[str, Header()] = None,):
+    user_id = decode_token(x_token)
+    return ContestController().check_in(contest_id, user_id)
