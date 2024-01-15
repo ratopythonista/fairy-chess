@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from sqlmodel import Session
 
 from fairy_chess.database import engine
@@ -11,26 +13,30 @@ class ContestController:
         self.session = Session(engine)
 
     def create(self, title: str, timestamp: float, size: int, qtd_rounds: int, shuffle_rate: int, user_id: str):
-        # try:
-        if True:
-            contest = Contest(title=title, timestamp=timestamp, size=size, creator=user_id)
+        try:
+            contest = Contest(id=str(uuid4()), title=title, timestamp=timestamp, size=size, creator=user_id)
             self.session.add(contest)
+            self.session.commit()
+            self.session.refresh(contest)
+
+            stage_list: list[Stage] = list()
             while size >= 8:
-                stage = Stage(title=f"TOP{size}", start_players=size, qtd_rounds=qtd_rounds, shuffle_rate=shuffle_rate)
+                stage = Stage(id=str(uuid4()), title=f"TOP{size}", start_players=size, qtd_rounds=qtd_rounds, shuffle_rate=shuffle_rate)
+                stage_list.append(stage)
+                size = size // 2
+            
+            for stage in stage_list:
+                contest_stage = ContestStages(contest_id=contest.id, stage_id=stage.id)
                 self.session.add(stage)
                 self.session.commit()
-
-                contest_stage = ContestStages(contest_id=contest.id, stage_id=stage.id)
                 self.session.add(contest_stage)
                 self.session.commit()
-                
-                size = size // 2
 
-            # self.session.commit()
             self.session.refresh(contest)
+            
             return contest.model_dump()
-        # except:
-        #     raise ControllerException(status_code=403, detail="Contest alredy exists")
+        except:
+            raise ControllerException(status_code=403, detail="Contest alredy exists")
 
     def fetch(self, user_id: str = None) -> list[dict]:
         return self.session.exec(

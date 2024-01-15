@@ -9,7 +9,7 @@ from fairy_chess.database.models.contest import Contest
 
 class Stage(SQLModel, table=True):
     id: Optional[str] = Field(default=str(uuid4()), primary_key=True)
-    title: str = Field(index=True, nullable=False, unique=True)
+    title: str = Field(index=True, nullable=False, unique=False)
     start_players: int = Field(nullable=False)
     qtd_rounds: int = Field(nullable=False)
     shuffle_rate: int = Field(nullable=False)
@@ -28,5 +28,5 @@ class StageUsers(SQLModel, table=True):
 class StageQuery:
 
     @staticmethod
-    def fetch(self, contest_id: str) -> list[dict]:
+    def fetch(contest_id: str) -> list[dict]:
         return select(Stage).join(ContestStages).where(ContestStages.contest_id == contest_id)
