@@ -12,10 +12,19 @@ def create(
     title: Annotated[str, Body()], 
     timestamp: Annotated[float, Body()],
     size: Annotated[int, Body()],
+    qtd_rounds: Annotated[int, Body()],
+    shuffle_rate: Annotated[int, Body()],
     x_token: Annotated[str, Header()] = None
 ):
     user_id = decode_token(x_token)
-    return ContestController().create(title=title, timestamp=timestamp, size=size, user_id=user_id)
+    return ContestController().create(
+        title=title,
+        timestamp=timestamp,
+        size=size,
+        qtd_rounds=qtd_rounds,
+        shuffle_rate=shuffle_rate,
+        user_id=user_id
+    )
 
 
 @contest_router.get('/')
@@ -25,7 +34,7 @@ def fetch(all: bool = False, x_token: Annotated[str, Header()] = None):
 
 
 @contest_router.get('/competitors/{contest_id}')
-def register(contest_id: str, check_in: bool = None, x_token: Annotated[str, Header()] = None,):
+def competitors(contest_id: str, check_in: bool = None, x_token: Annotated[str, Header()] = None,):
     decode_token(x_token)
     return ContestController().competitors(contest_id, check_in)
 

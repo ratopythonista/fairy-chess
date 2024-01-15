@@ -2,6 +2,7 @@ from sqlmodel import Session
 
 from fairy_chess.database import engine
 from fairy_chess.exceptions import ControllerException
+from fairy_chess.database.models.stage import Stage, ContestStages
 from fairy_chess.database.models.contest import Contest, ContestUser, ContestQuery
 
 
@@ -9,15 +10,27 @@ class ContestController:
     def __init__(self) -> None:
         self.session = Session(engine)
 
-    def create(self, title: str, timestamp: float, size: int, user_id: str):
-        try:
+    def create(self, title: str, timestamp: float, size: int, qtd_rounds: int, shuffle_rate: int, user_id: str):
+        # try:
+        if True:
             contest = Contest(title=title, timestamp=timestamp, size=size, creator=user_id)
             self.session.add(contest)
-            self.session.commit()
+            while size >= 8:
+                stage = Stage(title=f"TOP{size}", start_players=size, qtd_rounds=qtd_rounds, shuffle_rate=shuffle_rate)
+                self.session.add(stage)
+                self.session.commit()
+
+                contest_stage = ContestStages(contest_id=contest.id, stage_id=stage.id)
+                self.session.add(contest_stage)
+                self.session.commit()
+                
+                size = size // 2
+
+            # self.session.commit()
             self.session.refresh(contest)
             return contest.model_dump()
-        except:
-            raise ControllerException(status_code=403, detail="Contest alredy exists")
+        # except:
+        #     raise ControllerException(status_code=403, detail="Contest alredy exists")
 
     def fetch(self, user_id: str = None) -> list[dict]:
         return self.session.exec(
