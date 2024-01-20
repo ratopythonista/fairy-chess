@@ -30,3 +30,13 @@ class StageQuery:
     @staticmethod
     def fetch(contest_id: str) -> list[dict]:
         return select(Stage).join(ContestStages).where(ContestStages.contest_id == contest_id)
+    
+
+    @staticmethod
+    def find_by_id(stage_id: str) -> list[dict]:
+        return select(Stage).where(Stage.id == stage_id)
+    
+    def get_contest(stage_id: str):
+        return select(Contest).join(ContestStages).where(ContestStages.stage_id == stage_id)
+    
+

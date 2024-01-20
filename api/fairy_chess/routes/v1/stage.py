@@ -12,3 +12,14 @@ def create(contest_id: str, x_token: Annotated[str, Header()] = None):
     decode_token(x_token)
     return StageController().fetch(contest_id=contest_id)
 
+
+@stage_router.post('/{stage_id}')
+def update(
+        stage_id: str, 
+        start_players: int = None,
+        qtd_rounds: int = None,
+        shuffle_rate: int = None,
+        x_token: Annotated[str, Header()] = None
+    ):
+    user_id = decode_token(x_token)
+    return StageController().update(user_id=user_id, stage_id=stage_id, start_players=start_players, qtd_rounds=qtd_rounds, shuffle_rate=shuffle_rate)
