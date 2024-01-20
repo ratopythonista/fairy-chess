@@ -36,7 +36,7 @@ class ContestQuery:
     @staticmethod
     def competitors(contest_id: str, check_in: bool | None = None):
         query = select(User).join(ContestUser).where(ContestUser.contest_id == contest_id)
-        if check_in:
+        if check_in == True:
             return query.where(ContestUser.check_in == True)
         return query
     

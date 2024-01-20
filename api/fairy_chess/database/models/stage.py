@@ -20,7 +20,7 @@ class ContestStages(SQLModel, table=True):
     stage_id: str = Field(nullable=False, primary_key=True, foreign_key="stage.id")
 
 
-class StageUsers(SQLModel, table=True):
+class StageUser(SQLModel, table=True):
     stage_id: str = Field(nullable=False, primary_key=True, foreign_key="stage.id")
     user_id: str = Field(nullable=False, primary_key=True, foreign_key="user.id")
 
@@ -28,16 +28,21 @@ class StageUsers(SQLModel, table=True):
 class StageQuery:
 
     @staticmethod
-    def fetch(contest_id: str) -> list[dict]:
+    def fetch(contest_id: str):
         return select(Stage).join(ContestStages).where(ContestStages.contest_id == contest_id)
     
-
     @staticmethod
-    def find_by_id(stage_id: str) -> list[dict]:
+    def find_by_id(stage_id: str):
         return select(Stage).where(Stage.id == stage_id)
     
+    @staticmethod
+    def find_by_start_players(start_players: int):
+        return select(Stage).where(Stage.start_players == start_players)
+    
+    @staticmethod
     def get_contest(stage_id: str):
         return select(Contest).join(ContestStages).where(ContestStages.stage_id == stage_id)
 
+    @staticmethod
     def get_users(stage_id: str):
-        return select(StageUsers).where(StageUsers.stage_id == stage_id)
+        return select(StageUser).where(StageUser.stage_id == stage_id)

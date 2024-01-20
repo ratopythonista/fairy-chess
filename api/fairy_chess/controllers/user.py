@@ -1,5 +1,6 @@
 import re
 import hmac
+from uuid import uuid4
 
 from sqlmodel import Session
 
@@ -17,6 +18,9 @@ class UserController:
     def __init__(self) -> None:
         self.session = Session(engine)
 
+    def __del__(self) -> None:
+        self.session.close()
+
     def link_riot(self, user_id: str, riot_id: str) -> dict:
         user = self.session.exec(UserQuery.find_by_id(user_id)).first()
         if user:
@@ -28,17 +32,14 @@ class UserController:
         raise ControllerException(status_code=404, detail="User not found")
         
     def register(self, email: str, password: str) -> str:
-        try:
-            if re.fullmatch(EMAIL_RE, email) and re.fullmatch(PWD_RE, password):
-                hash_password = hmac.new(HASH_KEY.encode(), password.encode(), 'sha256').digest()
-                user = User(email=email, password=hash_password)
-                self.session.add(user)
-                self.session.commit()
-                self.session.refresh(user)
-                return encode_token(user.id)
-            raise ControllerException(status_code=403, detail="Invalid Email/Password")
-        except:
-            raise ControllerException(status_code=403, detail="User alredy exists")
+        if re.fullmatch(EMAIL_RE, email) and re.fullmatch(PWD_RE, password):
+            hash_password = hmac.new(HASH_KEY.encode(), password.encode(), 'sha256').digest()
+            user = User(id=str(uuid4()), email=email, password=hash_password)
+            self.session.add(user)
+            self.session.commit()
+            self.session.refresh(user)
+            return encode_token(user.id)
+        raise ControllerException(status_code=403, detail="Invalid Email/Password")
 
     def login(self, email: str, password: str) -> str:
         user = self.session.exec(UserQuery.find_by_email(email)).first()

@@ -13,6 +13,11 @@ def create(contest_id: str, x_token: Annotated[str, Header()] = None):
     return StageController().fetch(contest_id=contest_id)
 
 
+@stage_router.post('/{stage_id}/start')
+def start(stage_id: str, x_token: Annotated[str, Header()] = None):
+    user_id = decode_token(x_token)
+    return StageController().start(stage_id=stage_id, user_id=user_id)
+
 @stage_router.post('/{stage_id}')
 def update(
         stage_id: str, 

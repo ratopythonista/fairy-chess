@@ -12,6 +12,9 @@ class ContestController:
     def __init__(self) -> None:
         self.session = Session(engine)
 
+    def __del__(self) -> None:
+        self.session.close()
+
     def create(self, title: str, timestamp: float, size: int, qtd_rounds: int, shuffle_rate: int, user_id: str):
         try:
             contest = Contest(id=str(uuid4()), title=title, timestamp=timestamp, size=size, creator=user_id)
@@ -47,7 +50,7 @@ class ContestController:
 
     def competitors(self, contest_id: str, check_in: bool | None = None):
         return [
-            user.model_dump(exclude={'password', 'id', 'email'}) 
+            user.model_dump(exclude={'password', 'id'}) 
             for user in self.session.exec(ContestQuery.competitors(contest_id, check_in)).all()
         ]
 
