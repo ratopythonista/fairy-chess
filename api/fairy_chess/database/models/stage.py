@@ -38,5 +38,6 @@ class StageQuery:
     
     def get_contest(stage_id: str):
         return select(Contest).join(ContestStages).where(ContestStages.stage_id == stage_id)
-    
 
+    def get_users(stage_id: str):
+        return select(StageUsers).where(StageUsers.stage_id == stage_id)

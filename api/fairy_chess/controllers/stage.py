@@ -1,8 +1,19 @@
+from uuid import uuid4
+from random import shuffle
+
 from sqlmodel import Session
+from pydantic import BaseModel
 
 from fairy_chess.database import engine
 from fairy_chess.exceptions import ControllerException
-from fairy_chess.database.models.stage import StageQuery, Stage, Contest
+from fairy_chess.database.models.stage import StageQuery, Stage, Contest, User
+from fairy_chess.database.models.match import Match, MatchQuery, MatchUser
+
+
+class MatchDetail(BaseModel):
+    match_id: str
+    title: str
+    participants: list[str]
 
 
 class StageController:
@@ -27,5 +38,27 @@ class StageController:
                 self.session.commit()
                 self.session.refresh(stage)
                 return stage
+        except Exception as e:
+            raise ControllerException(404, f"Couldnt update stage: {e}")
+
+    def matches(self, stage_id: str):
+        try:
+            stage: Stage = self.session.exec(StageQuery.find_by_id(stage_id=stage_id)).first()
+            user_list: list[User] = self.session.exec(StageQuery.get_users(stage_id=stage_id)).all()
+            match_list: list[dict] = []
+            while user_list:
+                qtd_matches: int = self.session.exec(MatchQuery.find_stage_matches(stage_id=stage_id)).all().count()
+                match = Match(id=str(uuid4()), title=f'Match {stage.start_players}-{qtd_matches:03d}', stage_id=stage_id)
+                self.session.add(match)
+                match_detail = MatchDetail(match_id=match.id, title=match.title, participants=[])
+                for _ in range(8):
+                    shuffle(user_list)
+                    user_id = user_list.pop()
+                    match_users = MatchUser(match_id=match.id, user_id=user_id)
+                    self.session.add(match_users)
+                    match_detail.participants.append(user_id)
+                match_list.append(match_detail.model_dump())
+            return match_list
+
         except Exception as e:
             raise ControllerException(404, f"Couldnt update stage: {e}")
