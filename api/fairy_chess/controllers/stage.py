@@ -13,8 +13,7 @@ class StageController:
         return [stage.model_dump() for stage in self.session.exec(StageQuery.fetch(contest_id)).all()]
     
     def update(self, user_id: str, stage_id: str, start_players: int = None, qtd_rounds: int = None, shuffle_rate: int = None):
-        #try:
-        if True:
+        try:
             stage: Stage = self.session.exec(StageQuery.find_by_id(stage_id=stage_id)).first()
             contest: Contest = self.session.exec(StageQuery.get_contest(stage_id=stage_id)).first()
             if contest.creator == user_id:
@@ -28,5 +27,5 @@ class StageController:
                 self.session.commit()
                 self.session.refresh(stage)
                 return stage
-        #except Exception as e:
-         #   raise ControllerException(404, f"Couldnt update stage: {e}")
+        except Exception as e:
+            raise ControllerException(404, f"Couldnt update stage: {e}")
