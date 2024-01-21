@@ -56,15 +56,16 @@ class StageController:
 
     def start(self, user_id: str, stage_id: str):
         current_stage: Stage = self.session.exec(StageQuery.find_by_id(stage_id=stage_id)).first()
-        previous_stage: Stage = self.session.exec(StageQuery.find_by_start_players(start_players=current_stage.start_players // 2)).first()
+        previous_stage: Stage = self.session.exec(StageQuery.find_by_start_players(start_players=current_stage.start_players*2)).first()
         if not previous_stage:
             contest: Contest = self.session.exec(StageQuery.get_contest(stage_id=stage_id)).first()
-            contest_user_list: list[ContestUser] = self.session.exec(ContestQuery.competitors(contest_id=contest.id)).all()
-            from loguru import logger
-            logger.debug(contest_user_list)
+            if contest.creator != user_id:
+                raise ControllerException(403, f"Only the creator can start the stage")
+
+            contest_user_list: list[User] = self.session.exec(ContestQuery.competitors(str(contest.id), None)).all()
             stage_user_list: list[dict] = [
                 self.__insert_stage_user(
-                    stage_id=stage_id, user_id=contest_user.user_id
+                    stage_id=stage_id, user_id=contest_user.id
                 ).model_dump() 
                 for contest_user in contest_user_list
             ]

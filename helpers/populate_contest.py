@@ -1,8 +1,8 @@
 import requests
 from time import sleep
 
-REGISTER_URL = "http://localhost:8000/api/v1/user/register"
-CONTEST_URL = "http://localhost:8000/api/v1/contest/register/41d82129-e524-47ad-a0d7-b032578c4a9c"
+REGISTER_URL = "http://localhost:8000/api/v1/user/login"
+CONTEST_URL = "http://localhost:8000/api/v1/contest/register/70d5ec57-64d3-42ce-b6f9-e5729d2ea074"
 
 
 for index in range(128):
