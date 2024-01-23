@@ -31,6 +31,11 @@ class StageController:
         self.session.commit()
         self.session.refresh(stage_user)
         return stage_user
+    
+    def __check_ownership(self, stage_id: str, user_id: str):
+        contest: Contest = self.session.exec(StageQuery.get_contest(stage_id=stage_id)).first()
+        if contest.creator != user_id:
+            raise ControllerException(403, f"Only the creator can start the stage")
 
 
     def fetch(self, contest_id: str) -> list[dict]:
@@ -53,38 +58,3 @@ class StageController:
                 return stage
         except Exception as e:
             raise ControllerException(404, f"Couldnt update stage: {e}")
-
-    def start(self, user_id: str, stage_id: str):
-        current_stage: Stage = self.session.exec(StageQuery.find_by_id(stage_id=stage_id)).first()
-        previous_stage: Stage = self.session.exec(StageQuery.find_by_start_players(start_players=current_stage.start_players*2)).first()
-        if not previous_stage:
-            contest: Contest = self.session.exec(StageQuery.get_contest(stage_id=stage_id)).first()
-            if contest.creator != user_id:
-                raise ControllerException(403, f"Only the creator can start the stage")
-
-            contest_user_list: list[User] = self.session.exec(ContestQuery.competitors(str(contest.id), None)).all()
-            stage_user_list: list[dict] = [
-                self.__insert_stage_user(
-                    stage_id=stage_id, user_id=contest_user.id
-                ).model_dump() 
-                for contest_user in contest_user_list
-            ]
-            return stage_user_list
-
-    def matches(self, stage_id: str):
-        stage: Stage = self.session.exec(StageQuery.find_by_id(stage_id=stage_id)).first()
-        user_list: list[User] = self.session.exec(StageQuery.get_users(stage_id=stage_id)).all()
-        match_list: list[dict] = []
-        while user_list:
-            qtd_matches: int = self.session.exec(MatchQuery.find_stage_matches(stage_id=stage_id)).all().count()
-            match = Match(id=str(uuid4()), title=f'Match {stage.start_players}-{qtd_matches:03d}', stage_id=stage_id)
-            self.session.add(match)
-            match_detail = MatchDetail(match_id=match.id, title=match.title, participants=[])
-            for _ in range(8):
-                shuffle(user_list)
-                user_id = user_list.pop()
-                match_users = MatchUser(match_id=match.id, user_id=user_id)
-                self.session.add(match_users)
-                match_detail.participants.append(user_id)
-            match_list.append(match_detail.model_dump())
-        return match_list
