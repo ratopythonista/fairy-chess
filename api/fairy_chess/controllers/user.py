@@ -5,7 +5,7 @@ from uuid import uuid4
 from sqlmodel import Session
 
 from fairy_chess.config import HASH_KEY
-from fairy_chess.database import engine
+from fairy_chess.controllers import BaseController
 from fairy_chess.controllers.token import encode_token
 from fairy_chess.database.models.user import User, UserQuery
 
@@ -14,13 +14,7 @@ from fairy_chess.exceptions import ControllerException
 EMAIL_RE = r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+'
 PWD_RE = r'[\d|\w|]{8,}'
 
-class UserController:
-    def __init__(self) -> None:
-        self.session = Session(engine)
-
-    def __del__(self) -> None:
-        self.session.close()
-
+class UserController(BaseController):
     def link_riot(self, user_id: str, riot_id: str) -> dict:
         user = self.session.exec(UserQuery.find_by_id(user_id)).first()
         if user:

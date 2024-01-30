@@ -17,19 +17,3 @@ def create(contest_id: str, x_token: Annotated[str, Header()] = None):
 def start(stage_id: str, x_token: Annotated[str, Header()] = None):
     user_id = decode_token(x_token)
     return StageController().start(stage_id=stage_id, user_id=user_id)
-
-@stage_router.post('/{stage_id}/matches/{round}')
-def start(stage_id: str, round: int, x_token: Annotated[str, Header()] = None):
-    user_id = decode_token(x_token)
-    return StageController().matches(stage_id=stage_id, round=round, user_id=user_id)
-
-@stage_router.post('/{stage_id}')
-def update(
-        stage_id: str, 
-        start_players: int = None,
-        qtd_rounds: int = None,
-        shuffle_rate: int = None,
-        x_token: Annotated[str, Header()] = None
-    ):
-    user_id = decode_token(x_token)
-    return StageController().update(user_id=user_id, stage_id=stage_id, start_players=start_players, qtd_rounds=qtd_rounds, shuffle_rate=shuffle_rate)

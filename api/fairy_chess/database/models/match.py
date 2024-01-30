@@ -6,7 +6,6 @@ from sqlmodel import Field, SQLModel, select
 from fairy_chess.database.models.user import User
 from fairy_chess.database.models.stage import Stage
 
-# TODO remove lobby and start_time from ERD and change lobby_id to title
 class Match(SQLModel, table=True):
     id: Optional[str] = Field(default=str(uuid4()), primary_key=True)
     title: str = Field(index=True, nullable=False, unique=False)
@@ -16,7 +15,6 @@ class Match(SQLModel, table=True):
     stage_id: Optional[str] = Field(nullable=False, foreign_key="stage.id")
 
 
-# TODO include to ERD placement
 class MatchUser(SQLModel, table=True):
     match_id: str = Field(nullable=False, primary_key=True, foreign_key="match.id")
     user_id: str = Field(nullable=False, primary_key=True, foreign_key="user.id")

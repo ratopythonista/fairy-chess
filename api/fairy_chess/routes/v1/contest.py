@@ -11,9 +11,6 @@ contest_router = APIRouter(prefix="/contest", tags=["admin"])
 def create(
     title: Annotated[str, Body()], 
     timestamp: Annotated[float, Body()],
-    size: Annotated[int, Body()],
-    qtd_rounds: Annotated[int, Body()],
-    shuffle_rate: Annotated[int, Body()],
     x_token: Annotated[str, Header()] = None
 ):
     user_id = decode_token(x_token)

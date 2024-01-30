@@ -4,7 +4,6 @@ from typing import Optional
 from sqlmodel import Field, SQLModel, select
 
 
-# TODO change username for email in ERD
 class User(SQLModel, table=True):
     id: Optional[str] = Field(default=str(uuid4()), primary_key=True)
     email: str = Field(index=True, nullable=False, unique=True)
