@@ -1,52 +1,42 @@
 from uuid import uuid4
 from datetime import datetime, timedelta
 
-from fairy_chess.controllers import BaseController
 from fairy_chess.exceptions import ControllerException
-from fairy_chess.database.models.contest import Contest, ContestUser, ContestQuery
+from fairy_chess.database.models.contest import Contest, ContestUser, ContestRepository
 
 
-class ContestController(BaseController):
-    def create(self, title: str, timestamp: float, size: int, qtd_rounds: int, shuffle_rate: int, user_id: str):
+class ContestController:
+    def create(self, title: str, timestamp: float, start_players: int, user_id: str):
         try:
-            contest = Contest(id=str(uuid4()), title=title, timestamp=timestamp, size=size, creator=user_id)
-            self.session.add(contest)
-            self.session.commit()
-            self.session.refresh(contest)
-            
-            return contest.model_dump()
+            return ContestRepository().new_contest(title, timestamp, start_players, user_id)
         except:
             raise ControllerException(status_code=403, detail="Contest alredy exists")
 
     def fetch(self, user_id: str = None) -> list[dict]:
-        return self.session.exec(
-            ContestQuery.find_all(user_id)
-        ).first().model_dump(
-            exclude={"creator"} if user_id else {}
-        )
+        return ContestRepository().find_all(user_id)
 
     def competitors(self, contest_id: str, check_in: bool | None = None):
-        return [
-            user.model_dump(exclude={'password', 'id'}) 
-            for user in self.session.exec(ContestQuery.competitors(contest_id, check_in)).all()
-        ]
+        return ContestRepository().competitors(contest_id, check_in)
 
-    def register(self, contest_id: str, user_id: str):
+    def register(self, contest_id: str, user_id: str) -> dict:
         try:
-            contest_user = ContestUser(contest_id=contest_id, user_id=user_id)
-            self.session.add(contest_user)
-            self.session.commit()
-            self.session.refresh(contest_user)
-            return contest_user.model_dump()
+            return ContestRepository().register(contest_id, user_id)
         except:
             raise ControllerException(status_code=403, detail="User alredy register in this tournment")
 
     def check_in(self, contest_id: str, user_id: str):
-        contest_user: ContestUser = self.session.exec(ContestQuery.find_registred(contest_id, user_id)).first()
-        contest: Contest = self.session.exec(ContestQuery.find_by_id(contest_id)).first()
-        if contest_user and not datetime.now().timestamp() < contest.timestamp - timedelta(minutes=30):
-            contest_user.check_in = True
-            self.session.commit()
-            self.session.refresh(contest_user)
-            return contest_user.model_dump()
+        contest_repository = ContestRepository()
+        contest: Contest = contest_repository.find_by_id(contest_id)
+        if (
+            contest_repository.is_registred(contest_id=contest_id, user_id=user_id) 
+            and not datetime.now().timestamp() < contest.timestamp - timedelta(minutes=30)
+        ):
+            return contest_repository.check_in(contest_id, user_id)
         raise ControllerException(status_code=403, detail="Check In Error")
+    
+    def start(self, contest_id: str, user_id: str):
+        contest_repository = ContestRepository()
+        contest: Contest = contest_repository.find_by_id(contest_id)
+        if contest.creator == user_id:
+            pass
+        raise ControllerException(status_code=403, detail="Start Error")

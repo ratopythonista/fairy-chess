@@ -3,6 +3,7 @@ from uuid import uuid4
 from typing import Optional
 from sqlmodel import Field, SQLModel, select
 
+from fairy_chess.database import BaseRepository
 from fairy_chess.database.models.user import User
 from fairy_chess.database.models.contest import Contest
 
@@ -11,8 +12,6 @@ class Stage(SQLModel, table=True):
     id: Optional[str] = Field(default=str(uuid4()), primary_key=True)
     title: str = Field(index=True, nullable=False, unique=False)
     start_players: int = Field(nullable=False)
-    qtd_rounds: int = Field(nullable=False)
-    shuffle_rate: int = Field(nullable=False)
     contest_id: str = Field(nullable=False, primary_key=True, foreign_key="contest.id")
 
 
@@ -22,7 +21,7 @@ class StageUser(SQLModel, table=True):
     check_in: Optional[bool] = Field(default=False, primary_key=True)
 
 
-class StageQuery:
+class StageRepository(BaseRepository):
 
     @staticmethod
     def fetch(contest_id: str):

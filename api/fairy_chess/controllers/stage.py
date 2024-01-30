@@ -1,7 +1,7 @@
 from fairy_chess.controllers import BaseController
 from fairy_chess.exceptions import ControllerException
 from fairy_chess.database.models.contest import ContestQuery
-from fairy_chess.database.models.stage import StageQuery, Stage, Contest, StageUser
+from fairy_chess.database.models.stage import StageRepository, Stage, Contest, StageUser
 
 
 class StageController(BaseController):
@@ -19,5 +19,5 @@ class StageController(BaseController):
 
 
     def fetch(self, contest_id: str) -> list[dict]:
-        return [stage.model_dump() for stage in self.session.exec(StageQuery.fetch(contest_id)).all()]
+        return [stage.model_dump() for stage in self.session.exec(StageRepository.fetch(contest_id)).all()]
 

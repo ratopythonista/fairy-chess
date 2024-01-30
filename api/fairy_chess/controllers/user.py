@@ -7,7 +7,7 @@ from sqlmodel import Session
 from fairy_chess.config import HASH_KEY
 from fairy_chess.controllers import BaseController
 from fairy_chess.controllers.token import encode_token
-from fairy_chess.database.models.user import User, UserQuery
+from fairy_chess.database.models.user import User, UserRepository
 
 from fairy_chess.exceptions import ControllerException
 
@@ -16,27 +16,17 @@ PWD_RE = r'[\d|\w|]{8,}'
 
 class UserController(BaseController):
     def link_riot(self, user_id: str, riot_id: str) -> dict:
-        user = self.session.exec(UserQuery.find_by_id(user_id)).first()
-        if user:
-            user.riot_id = riot_id
-            self.session.add(user)
-            self.session.commit()
-            self.session.refresh(user)
-            return user.model_dump(exclude={'password', 'id'})
-        raise ControllerException(status_code=404, detail="User not found")
-        
+        return UserRepository().update_riot_id(user_id, riot_id)
+
     def register(self, email: str, password: str) -> str:
         if re.fullmatch(EMAIL_RE, email) and re.fullmatch(PWD_RE, password):
-            hash_password = hmac.new(HASH_KEY.encode(), password.encode(), 'sha256').digest()
-            user = User(id=str(uuid4()), email=email, password=hash_password)
-            self.session.add(user)
-            self.session.commit()
-            self.session.refresh(user)
+            hash_password: bytes = hmac.new(HASH_KEY.encode(), password.encode(), 'sha256').digest()
+            user = UserRepository().new_user(email, hash_password)
             return encode_token(user.id)
         raise ControllerException(status_code=403, detail="Invalid Email/Password")
 
     def login(self, email: str, password: str) -> str:
-        user = self.session.exec(UserQuery.find_by_email(email)).first()
+        user = UserRepository().find_by_email(email)
         hash_password = hmac.new(HASH_KEY.encode(), password.encode(), 'sha256').digest()
         if user and hmac.compare_digest(user.password, hash_password):
             return encode_token(user.id)

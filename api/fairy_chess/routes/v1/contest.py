@@ -11,15 +11,14 @@ contest_router = APIRouter(prefix="/contest", tags=["admin"])
 def create(
     title: Annotated[str, Body()], 
     timestamp: Annotated[float, Body()],
+    start_players: Annotated[int, Body()],
     x_token: Annotated[str, Header()] = None
 ):
     user_id = decode_token(x_token)
     return ContestController().create(
         title=title,
         timestamp=timestamp,
-        size=size,
-        qtd_rounds=qtd_rounds,
-        shuffle_rate=shuffle_rate,
+        start_players=start_players,
         user_id=user_id
     )
 
@@ -43,6 +42,11 @@ def register(contest_id: str,  x_token: Annotated[str, Header()] = None,):
 
 
 @contest_router.post('/checkin/{contest_id}')
-def register(contest_id: str, x_token: Annotated[str, Header()] = None,):
+def check_in(contest_id: str, x_token: Annotated[str, Header()] = None,):
     user_id = decode_token(x_token)
     return ContestController().check_in(contest_id, user_id)
+
+@contest_router.post('/start/{contest_id}')
+def check_in(contest_id: str, x_token: Annotated[str, Header()] = None,):
+    user_id = decode_token(x_token)
+    return ContestController().start(contest_id, user_id)
