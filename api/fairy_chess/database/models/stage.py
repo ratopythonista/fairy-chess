@@ -22,19 +22,16 @@ class StageUser(SQLModel, table=True):
 
 
 class StageRepository(BaseRepository):
-
-    @staticmethod
-    def fetch(contest_id: str):
-        return select(Stage).where(Stage.contest_id == contest_id)
+    def new_stage(self, title: str, start_players: int, contest_id: str) -> Stage:
+        stage = Stage(id=str(uuid4()), title=title, start_players=start_players, contest_id=contest_id)
+        self.session.add(stage)
+        self.session.commit()
+        self.session.refresh(stage)
+        return stage
     
-    @staticmethod
-    def find_by_id(stage_id: str):
-        return select(Stage).where(Stage.id == stage_id)
-    
-    @staticmethod
-    def find_by_start_players(start_players: int):
-        return select(Stage).where(Stage.start_players == start_players)
-
-    @staticmethod
-    def get_users(stage_id: str):
-        return select(StageUser).where(StageUser.stage_id == stage_id)
+    def new_stage_user(self, stage_id: str, user_id: str) -> StageUser:
+        stage_user = StageUser(stage_id=stage_id, user_id=user_id)
+        self.session.add(stage_user)
+        self.session.commit()
+        self.session.refresh(stage_user)
+        return stage_user

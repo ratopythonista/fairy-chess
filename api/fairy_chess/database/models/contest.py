@@ -34,14 +34,15 @@ class ContestRepository(BaseRepository):
     def find_by_id(self, contest_id: str) -> dict:
         return self.session.exec(select(Contest).where(Contest.id == contest_id)).first().model_dump()
 
-    def competitors(self, contest_id: str, check_in: bool | None = None) -> list[dict]:
+    def competitors(self, contest_id: str, check_in: bool = None) -> list[dict]:
         query = select(User).join(ContestUser).where(ContestUser.contest_id == contest_id)
         if check_in == True:
             return query.where(ContestUser.check_in == True)
-        return [
-            user.model_dump(exclude={'password', 'id'}) 
-            for user in self.session.exec(query).all()
-        ]
+        result = [user for user in self.session.exec(query).all()]
+        result = result.sort(key=lambda user: user.riot_id)
+
+
+        return [user.model_dump(exclude={'password', 'id'}) for user in result]
 
     def is_registred(self, contest_id: str, user_id: str) -> str:
         return self.session.exec(select(ContestUser).where(

@@ -2,7 +2,8 @@ from uuid import uuid4
 from datetime import datetime, timedelta
 
 from fairy_chess.exceptions import ControllerException
-from fairy_chess.database.models.contest import Contest, ContestUser, ContestRepository
+from fairy_chess.database.models.contest import Contest, ContestRepository
+from fairy_chess.database.models.stage import Stage, StageRepository
 
 
 class ContestController:
@@ -38,5 +39,9 @@ class ContestController:
         contest_repository = ContestRepository()
         contest: Contest = contest_repository.find_by_id(contest_id)
         if contest.creator == user_id:
-            pass
+            stage_repository = StageRepository()
+            stage: Stage = stage_repository.new_stage(f'TOP{contest.start_players}', contest.start_players, contest_id)
+            for competitor in contest_repository.competitors(contest_id, check_in=True):
+                stage_repository.new_stage_user(stage_id=stage.id, user_id=competitor['user_id'])
+
         raise ControllerException(status_code=403, detail="Start Error")
