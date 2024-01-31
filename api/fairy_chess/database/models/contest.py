@@ -5,6 +5,7 @@ from sqlmodel import Field, SQLModel, select
 
 from fairy_chess.database import BaseRepository
 from fairy_chess.database.models.user import User
+from fairy_chess.services.riot import RiotService
 
 
 class Contest(SQLModel, table=True):
@@ -34,15 +35,20 @@ class ContestRepository(BaseRepository):
     def find_by_id(self, contest_id: str) -> dict:
         return self.session.exec(select(Contest).where(Contest.id == contest_id)).first().model_dump()
 
-    def competitors(self, contest_id: str, check_in: bool = None) -> list[dict]:
+    def competitors(self, contest_id: str, check_in: bool = None, sorted: bool = False, limit: int = -1) -> list[dict]:
         query = select(User).join(ContestUser).where(ContestUser.contest_id == contest_id)
-        if check_in == True:
+        if check_in is True:
             return query.where(ContestUser.check_in == True)
-        result = [user for user in self.session.exec(query).all()]
-        result = result.sort(key=lambda user: user.riot_id)
+        user_list = [user for user in self.session.exec(query).all()]
+        if sorted is True:
+            user_list.sort(key=lambda user: RiotService().get_league_points(user.riot_id))
 
-
-        return [user.model_dump(exclude={'password', 'id'}) for user in result]
+        if limit > 0:
+            while limit > len(user_list):
+                limit //= 2
+            user_list = user_list[:limit]
+        
+        return [user.model_dump(exclude={'password', 'id'}) for user in user_list]
 
     def is_registred(self, contest_id: str, user_id: str) -> str:
         return self.session.exec(select(ContestUser).where(

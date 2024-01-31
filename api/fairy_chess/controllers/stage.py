@@ -20,4 +20,6 @@ class StageController(BaseController):
 
     def fetch(self, contest_id: str) -> list[dict]:
         return [stage.model_dump() for stage in self.session.exec(StageRepository.fetch(contest_id)).all()]
+    
+
 

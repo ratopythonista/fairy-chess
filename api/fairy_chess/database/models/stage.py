@@ -35,3 +35,8 @@ class StageRepository(BaseRepository):
         self.session.commit()
         self.session.refresh(stage_user)
         return stage_user
+    
+    def init_stage(self, contest_id: str, competitors: list[dict]) -> list[StageUser]:
+        stage: Stage = self.new_stage(f'TOP{len(competitors)}', len(competitors), contest_id)
+        return [self.new_stage_user(stage_id=stage.id, user_id=competitor['user_id']) for competitor in competitors]
+            
