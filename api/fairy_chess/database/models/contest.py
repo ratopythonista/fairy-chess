@@ -50,7 +50,7 @@ class ContestRepository(BaseRepository):
         
         return [user.model_dump(exclude={'password', 'id'}) for user in user_list]
 
-    def is_registred(self, contest_id: str, user_id: str) -> str:
+    def is_registred(self, contest_id: str, user_id: str) -> bool:
         return self.session.exec(select(ContestUser).where(
             ContestUser.contest_id == contest_id, ContestUser.user_id == user_id
         )).first() is not None

@@ -1,13 +1,12 @@
-from enum import StrEnum
+from enum import Enum
 
-from requests import Session, Response
 from fastapi import HTTPException
-from pydantic import BaseModel, Field
+from requests import Session, Response
 
 from fairy_chess.config import RIOT_API_KEY
 
 
-class Endpoint(StrEnum):
+class Endpoint(Enum):
     PUUID           = "https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{}/{}"
     SUMMONER        = "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/{}"
     RANK            = "https://br1.api.riotgames.com/tft/league/v1/entries/by-summoner/{}"

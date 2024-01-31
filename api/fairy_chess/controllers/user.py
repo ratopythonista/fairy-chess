@@ -1,20 +1,16 @@
 import re
 import hmac
-from uuid import uuid4
-
-from sqlmodel import Session
 
 from fairy_chess.config import HASH_KEY
-from fairy_chess.controllers import BaseController
 from fairy_chess.controllers.token import encode_token
-from fairy_chess.database.models.user import User, UserRepository
+from fairy_chess.database.models.user import UserRepository
 
 from fairy_chess.exceptions import ControllerException
 
 EMAIL_RE = r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+'
 PWD_RE = r'[\d|\w|]{8,}'
 
-class UserController(BaseController):
+class UserController:
     def link_riot(self, user_id: str, riot_id: str) -> dict:
         return UserRepository().update_riot_id(user_id, riot_id)
 

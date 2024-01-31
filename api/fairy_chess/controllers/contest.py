@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from fairy_chess.exceptions import ControllerException
 from fairy_chess.database.models.contest import Contest, ContestRepository
-from fairy_chess.database.models.stage import Stage, StageRepository
+from fairy_chess.database.models.stage import Stage, StageUser, StageRepository
 
 
 class ContestController:
@@ -30,7 +30,7 @@ class ContestController:
         contest: Contest = contest_repository.find_by_id(contest_id)
         if (
             contest_repository.is_registred(contest_id=contest_id, user_id=user_id) 
-            and not datetime.now().timestamp() < contest.timestamp - timedelta(minutes=30)
+            and not datetime.now() < datetime.fromtimestamp(contest["timestamp"]) - timedelta(minutes=30)
         ):
             return contest_repository.check_in(contest_id, user_id)
         raise ControllerException(status_code=403, detail="Check In Error")

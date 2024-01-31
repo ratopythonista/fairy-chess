@@ -12,7 +12,7 @@ class Stage(SQLModel, table=True):
     id: Optional[str] = Field(default=str(uuid4()), primary_key=True)
     title: str = Field(index=True, nullable=False, unique=False)
     start_players: int = Field(nullable=False)
-    contest_id: str = Field(nullable=False, primary_key=True, foreign_key="contest.id")
+    contest_id: str = Field(nullable=False, foreign_key="contest.id")
 
 
 class StageUser(SQLModel, table=True):

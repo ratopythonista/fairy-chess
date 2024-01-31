@@ -25,7 +25,7 @@ class UserRepository(BaseRepository):
         return self.session.exec(select(User).where(User.email == email)).first()
 
     def update_riot_id(self, user_id: str, riot_id: str) -> dict:
-        user = self.session.exec(UserRepository.find_by_id(select(User).where(User.id == user_id))).first()
+        user = self.session.exec(select(User).where(User.id == user_id)).first()
         user.riot_id = riot_id
         self.session.add(user)
         self.session.commit()
