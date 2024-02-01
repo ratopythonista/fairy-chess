@@ -38,7 +38,8 @@ class ContestRepository(BaseRepository):
     def competitors(self, contest_id: str, check_in: bool = None, sorted: bool = False, limit: int = -1) -> list[dict]:
         query = select(User).join(ContestUser).where(ContestUser.contest_id == contest_id)
         if check_in is True:
-            return query.where(ContestUser.check_in == True)
+            pass # TODO remove after tests
+            # query = query.where(ContestUser.check_in == True)
         user_list = [user for user in self.session.exec(query).all()]
         if sorted is True:
             user_list.sort(key=lambda user: RiotService().get_league_points(user.riot_id))
@@ -47,8 +48,7 @@ class ContestRepository(BaseRepository):
             while limit > len(user_list):
                 limit //= 2
             user_list = user_list[:limit]
-        
-        return [user.model_dump(exclude={'password', 'id'}) for user in user_list]
+        return [user.model_dump(exclude={'password'}) for user in user_list]
 
     def is_registred(self, contest_id: str, user_id: str) -> bool:
         return self.session.exec(select(ContestUser).where(

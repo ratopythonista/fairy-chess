@@ -1,4 +1,5 @@
 from enum import Enum
+from time import sleep
 
 from fastapi import HTTPException
 from requests import Session, Response
@@ -6,7 +7,7 @@ from requests import Session, Response
 from fairy_chess.config import RIOT_API_KEY
 
 
-class Endpoint(Enum):
+class Endpoint(str, Enum):
     PUUID           = "https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{}/{}"
     SUMMONER        = "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/{}"
     RANK            = "https://br1.api.riotgames.com/tft/league/v1/entries/by-summoner/{}"
@@ -22,15 +23,23 @@ class RiotService():
 
     def get_league_points(self, riot_id: str) -> int:
         response: Response = None
+        name, tag = riot_id.split("#")
         try:
-            response = self.session.get(Endpoint.PUUID.format(riot_id.name, riot_id.tag))
+            from loguru import logger
+            response = self.session.get(Endpoint.PUUID.format(name, tag))
             puuid_response: dict = response.json()
+            
+            sleep(1)
 
             response = self.session.get(Endpoint.SUMMONER.format(puuid_response.get("puuid")))
             summoner_response: dict = response.json()
 
+            sleep(1)
+
             response = self.session.get(Endpoint.RANK.format(summoner_response.get("id")))
             rank_response: list[dict] = response.json()
+
+            sleep(1)
 
             tier_list = ["IRON", "BRONZE", "SILVER", "GOLD", "PLATINUM", "EMERALD", "DIAMOND", "MASTER", "GRANDMASTER", "CHALLENGER"]
             rank_list = ["I", "II", "III", "IV"]
@@ -38,8 +47,9 @@ class RiotService():
                 if content.get("queueType") == "RANKED_TFT":
                     tier, rank, lp = map(content.get, ["tier", "rank", "leaguePoints"])
                     if tier == "UNRANKED":
-                        return 0
-                    return (tier_list.index(tier) * 4 + rank_list.index(rank)) * 100 + lp
+                        lp = 0
+                    lp = (tier_list.index(tier) * 4 + rank_list.index(rank)) * 100 + lp
+                    return lp
 
         except Exception as e:
             raise HTTPException(500, str(e))

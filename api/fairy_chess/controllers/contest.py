@@ -38,8 +38,8 @@ class ContestController:
     def start(self, contest_id: str, user_id: str) -> list[StageUser]:
         contest_repository = ContestRepository()
         contest: Contest = contest_repository.find_by_id(contest_id)
-        if contest.creator == user_id:
-            competitors = contest_repository.competitors(contest_id, check_in=True, sorted=True, limit=contest.start_players)
+        if contest["creator"] == user_id:
+            competitors = contest_repository.competitors(contest_id, check_in=True, sorted=True, limit=contest["start_players"])
             return StageRepository().init_stage(contest_id, competitors)
 
         raise ControllerException(status_code=403, detail="Start Error")
