@@ -22,6 +22,12 @@ class StageUser(SQLModel, table=True):
 
 
 class StageRepository(BaseRepository):
+    def fetch_one(self, stage_id: str) -> list[Stage]:
+        return self.session.exec(select(Stage).where(Stage.id == stage_id)).first()
+
+    def fetch_by_contest_id(self, contest_id: str) -> list[Stage]:
+        return self.session.exec(select(Stage).where(Stage.contest_id == contest_id)).all()
+
     def new_stage(self, title: str, start_players: int, contest_id: str) -> Stage:
         stage = Stage(id=str(uuid4()), title=title, start_players=start_players, contest_id=contest_id)
         self.session.add(stage)
@@ -36,6 +42,9 @@ class StageRepository(BaseRepository):
         self.session.refresh(stage_user)
         return stage_user
     
+    def competitors(self, stage_id: str) -> list[StageUser]:
+        return self.session.exec(select(StageUser).where(StageUser.stage_id == stage_id)).all()
+
     def init_stage(self, contest_id: str, competitors: list[dict]) -> list[StageUser]:
         stage: Stage = self.new_stage(f'TOP{len(competitors)}', len(competitors), contest_id)
         return [self.new_stage_user(stage_id=stage.id, user_id=competitor['id']) for competitor in competitors]

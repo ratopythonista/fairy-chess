@@ -33,7 +33,8 @@ class ContestRepository(BaseRepository):
         return [contest.model_dump() for contest in self.session.exec(query).all()]
 
     def find_by_id(self, contest_id: str) -> dict:
-        return self.session.exec(select(Contest).where(Contest.id == contest_id)).first().model_dump()
+        if contest := self.session.exec(select(Contest).where(Contest.id == contest_id)).first():
+            return contest.model_dump()
 
     def competitors(self, contest_id: str, check_in: bool = None, sorted: bool = False, limit: int = -1) -> list[dict]:
         query = select(User).join(ContestUser).where(ContestUser.contest_id == contest_id)
