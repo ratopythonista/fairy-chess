@@ -1,41 +1,38 @@
-import random as rd
+from fairy_chess.services.riot import RiotService
 
-from pydantic import BaseModel
-from fastapi import HTTPException
+from fairy_chess.controllers.match import MatchController
 
-from fairy_chess.controllers.token import Token
-from fairy_chess.controllers.round import round_repository
-from fairy_chess.database.lobby import (
-    LobbyModel, lobby_repository, LobbyClassificationModel
-)
+from fairy_chess.database.models.user import UserRepository
+from fairy_chess.database.models.lobby import LobbyRepository, StageUser, LobbyUser
 
 
 class LobbyController:
-    def __init__(self, token: Token, lobby: BaseModel = None) -> None:
-        if lobby:
-            self.lobby: LobbyModel = LobbyModel(**lobby.model_dump())
-        self.token = token
+    def fetch(self, stage_id: str) -> list[dict]:
+        formated_response, lobby_repository = list(), LobbyRepository()
+        for lobby in lobby_repository.fetch_by_stage_id(stage_id):
+            formated_response.append({
+                "lobby": lobby.model_dump(exclude={'stage_id'}),
+                "competitors": [
+                    competitor.model_dump(exclude={'lobby_id', 'check_in'})
+                    for competitor in lobby_repository.competitors(lobby_id=lobby.id)
+                ]
+            })
 
-    def create(self):
-        if not lobby_repository.find_one(self.lobby):
-            round_base = round_repository.find_one_by_id(self.lobby.round_id)
-            if round_base:
-                allocated_competitors = set()
-                all_competitors = {competitor.riot_id for competitor in round_base.competitors}
-                for base_lobby in lobby_repository.find_by_round(self.lobby.round_id):
-                    for competitor in base_lobby.competitors:
-                        allocated_competitors.add(competitor.riot_id)
-                aviable_competitors = allocated_competitors ^ all_competitors
-                if aviable_competitors:
-                    self.lobby.competitors = [
-                        LobbyClassificationModel(riot_id=competitor) 
-                        for competitor in rd.sample(list(aviable_competitors), k=8)
-                    ]
-                    lobby_repository.save(self.lobby)
-                    return self.lobby.model_dump()
-                raise HTTPException(status_code=404, detail="There is no more aviable players for this round")
-            raise HTTPException(status_code=404, detail="Round does not exists")
-        raise HTTPException(status_code=403, detail="Lobby alredy exists")
+        return formated_response
+    
 
-    def fetch(self, round_id: str) -> list[dict]:
-        return [lobby.model_dump() for lobby in lobby_repository.find_by_round(round_id)]
+    def create_match(self, lobby_id: str, match_index: int, user_id: str) -> list[dict]:
+        user_repository = UserRepository()
+
+        riot_id = user_repository.find_by_id(user_id=user_id).riot_id
+        match_riot_id, placement_data = RiotService().get_last_match(riot_id=riot_id)
+
+        return MatchController().init_match(
+            title=f"Match {match_index}",
+            match_riot_id=match_riot_id,
+            lobby_id=lobby_id,
+            placement_data=placement_data
+        )
+    
+    def init_lobby(self, title: str, stage_id: str, competitors: list[StageUser]) -> list[LobbyUser]:
+        return LobbyRepository().init_lobby(title, stage_id, competitors)

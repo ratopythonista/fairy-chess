@@ -1,28 +1,25 @@
-from pydantic import BaseModel, Field
+from typing import Annotated
 
-from fastapi import APIRouter, Body
-from fairy_chess.database.user import UserModel
+from fastapi import APIRouter, Body, Header
+
+from fairy_chess.controllers.token import decode_token
 from fairy_chess.controllers.user import UserController
+
 
 user_router = APIRouter(prefix="/user", tags=["admin"])
 
 
-class UserRegisterRequest(BaseModel):
-    email: str = Field(..., description="User email")
-    password: str = Field(..., description="User password")
-    riot_id: str = Field('', description="User riot id (name#id)")
-
-
 @user_router.post('/register')
-def register(user: UserRegisterRequest = Body(..., description="User Registration Information")):
-    return {"access_token": UserController(user).register()}
-
-
-class UserLoginRequest(BaseModel):
-    email: str = Field(..., description="User email")
-    password: str = Field(..., description="User password")
+def register(email: Annotated[str, Body()], password: Annotated[str, Body()]):
+    return {"access_token": UserController().register(email, password)}
 
 
 @user_router.post('/login')
-def login(user: UserLoginRequest = Body(..., description="User Login Information")):
-    return {"access_token": UserController(user).login()}
+def login(email: Annotated[str, Body()], password: Annotated[str, Body()]):
+    return {"access_token": UserController().login(email, password)}
+
+
+@user_router.post('/link/riot')
+def create(riot_id: str, x_token: Annotated[str, Header()] = None):
+    user_id = decode_token(x_token)
+    return UserController().link_riot(user_id, riot_id)
