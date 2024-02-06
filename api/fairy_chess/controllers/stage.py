@@ -1,9 +1,11 @@
+from collections import defaultdict
 from random import shuffle as shuffle_list
 
 from fairy_chess.exceptions import ControllerException
 
 from fairy_chess.controllers.lobby import LobbyController
 
+from fairy_chess.database.models.match import MatchRepository
 from fairy_chess.database.models.lobby import LobbyRepository, LobbyUser
 from fairy_chess.database.models.contest import ContestRepository, Contest
 from fairy_chess.database.models.stage import StageRepository, Contest, StageUser, Stage
@@ -39,6 +41,14 @@ class StageController:
             lobbies.append([competitors.model_dump(exclude={'check_in', 'lobby_id'}) for competitors in lobby_info])
             lobby_letter = chr(ord(lobby_letter) + 1)
         return lobbies
+
+    def rank(self, stage_id: str):
+        matches, ranking = MatchRepository().fetch_by_stage(stage_id), defaultdict(int)
+        for match in matches:
+            for user in MatchRepository().get_match_user(match.id):
+                ranking[user.user_id] += (9 - user.placement)
+        sorted_ranking = sorted([{"user_id": key, "points": value} for key, value in ranking.items()], key=lambda rank: rank['points'], reverse=True)
+        return sorted_ranking
 
     def start(self, stage_id: str, user_id: str):
         self.__check_ownership(stage_id, user_id)

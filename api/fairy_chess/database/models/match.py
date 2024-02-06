@@ -4,7 +4,7 @@ from typing import Optional
 from sqlmodel import Field, SQLModel, select
 
 from fairy_chess.database import BaseRepository
-from fairy_chess.database.models.lobby import LobbyUser
+from fairy_chess.database.models.lobby import LobbyUser, Lobby
 
 
 class Match(SQLModel, table=True):
@@ -23,12 +23,12 @@ class MatchUser(SQLModel, table=True):
 
 
 class MatchRepository(BaseRepository):
-    def find_by_id(self, match_id: str):
-        return select(Match).where(Match.id == match_id)
-    
-    def find_by_lobby_id(self, lobby_id: str):
-        return select(Match).where(Match.lobby_id == lobby_id)
-    
+    def get_match_user(self, match_id: str):
+        return self.session.exec(select(MatchUser).where(MatchUser.match_id == match_id)).all()
+
+    def fetch_by_stage(self, stage_id: str) -> list[Match]:
+        return self.session.exec(select(Match).join(Lobby).where(Lobby.stage_id == stage_id)).all()
+
     def new_match(self, title: str, lobby_id: str, match_riot_id: str) -> Match:
         match = Match(id=str(uuid4()), title=title, lobby_id=lobby_id, riot_id=match_riot_id)
         self.session.add(match)

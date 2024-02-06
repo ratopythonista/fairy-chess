@@ -21,3 +21,8 @@ def start(stage_id: str, x_token: Annotated[str, Header()] = None):
 def shuffle(stage_id: str, round: int, x_token: Annotated[str, Header()] = None):
     user_id = decode_token(x_token)
     return StageController().shuffle(stage_id=stage_id, round=round, user_id=user_id)
+
+@stage_router.get('/{stage_id}/rank')
+def rank(stage_id: str, x_token: Annotated[str, Header()] = None):
+    decode_token(x_token)
+    return StageController().rank(stage_id=stage_id)
