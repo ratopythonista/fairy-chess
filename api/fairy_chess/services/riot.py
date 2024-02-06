@@ -9,6 +9,7 @@ from fairy_chess.config import RIOT_API_KEY
 
 class Endpoint(str, Enum):
     PUUID           = "https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{}/{}"
+    RIOT_ID         = "https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/{}"
     SUMMONER        = "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/{}"
     RANK            = "https://br1.api.riotgames.com/tft/league/v1/entries/by-summoner/{}"
     LAST_MATCH      = "https://americas.api.riotgames.com/tft/match/v1/matches/by-puuid/{}/ids?start=0&count=1"
@@ -21,11 +22,19 @@ class RiotService():
         self.session.headers = {"Content-Type": "application/json", "X-Riot-Token": RIOT_API_KEY}
         super().__init__()
 
+    def get_riot_id(self, puuid: str) -> str:
+        response: Response = None
+        try:
+            response = self.session.get(Endpoint.RIOT_ID.format(puuid))
+            summoner_response: dict = response.json()
+            return summoner_response.get("gameName") + "#" + summoner_response.get("tagLine")
+        except Exception as e:
+            raise HTTPException(500, str(e))
+
     def get_league_points(self, riot_id: str) -> int:
         response: Response = None
         name, tag = riot_id.split("#")
         try:
-            from loguru import logger
             response = self.session.get(Endpoint.PUUID.format(name, tag))
             puuid_response: dict = response.json()
             
@@ -54,22 +63,32 @@ class RiotService():
         except Exception as e:
             raise HTTPException(500, str(e))
 
-    # def get_last_match(self, puuid: str) -> Match:
-    #     response: Response = None
-    #     try:
-    #         response = self.session.get(Endpoint.LAST_MATCH.format(puuid))
-    #         last_match_response: dict = response.json()
-
-    #         response = self.session.get(Endpoint.MATCH_DETAILS.format(last_match_response[0]))
-    #         match_detail_response: dict[str, dict[str, list[dict]]] = response.json()
-
-    #         placement_list = [
-    #             Placement(map(content.get, ["puuid", "placement"]))
-    #             for content in match_detail_response["info"]["participants"]
-    #         ]
+    def get_last_match(self, riot_id: str) -> dict[str, int]:
+        response: Response = None
+        name, tag = riot_id.split("#")
+        try:
+            response = self.session.get(Endpoint.PUUID.format(name, tag))
+            puuid_response: dict = response.json()
+            
+            sleep(1)
         
-    #         return Match(match_id=last_match_response[0], placement=placement_list)
+            response = self.session.get(Endpoint.LAST_MATCH.format(puuid_response.get("puuid")))
+            match_response: dict = response.json()
 
-    #     except Exception as e:
-    #         raise HTTPException(500, str(e))
+            sleep(1)
+
+            match_riot_id = match_response[0]
+            response = self.session.get(Endpoint.MATCH_DETAILS.format(match_riot_id))
+            match_detail_response: dict[str, dict[str, list[dict]]] = response.json()
+
+            placement_data = {}
+            for content in match_detail_response["info"]["participants"]:
+                puuid, placement = map(content.get, ["puuid", "placement"])
+                riot_id = self.get_riot_id(puuid)
+                placement_data[riot_id] = placement
+
+            return match_riot_id, placement_data
+
+        except Exception as e:
+            raise HTTPException(500, str(e))
     

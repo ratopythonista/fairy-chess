@@ -1,3 +1,8 @@
+from fairy_chess.services.riot import RiotService
+
+from fairy_chess.controllers.match import MatchController
+
+from fairy_chess.database.models.user import UserRepository
 from fairy_chess.database.models.lobby import LobbyRepository, StageUser, LobbyUser
 
 
@@ -14,6 +19,20 @@ class LobbyController:
             })
 
         return formated_response
+    
+
+    def create_match(self, lobby_id: str, match_index: int, user_id: str) -> list[dict]:
+        user_repository = UserRepository()
+
+        riot_id = user_repository.find_by_id(user_id=user_id).riot_id
+        match_riot_id, placement_data = RiotService().get_last_match(riot_id=riot_id)
+
+        return MatchController().init_match(
+            title=f"Match {match_index}",
+            match_riot_id=match_riot_id,
+            lobby_id=lobby_id,
+            placement_data=placement_data
+        )
     
     def init_lobby(self, title: str, stage_id: str, competitors: list[StageUser]) -> list[LobbyUser]:
         return LobbyRepository().init_lobby(title, stage_id, competitors)

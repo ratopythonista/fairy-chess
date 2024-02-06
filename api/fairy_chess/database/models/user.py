@@ -23,6 +23,12 @@ class UserRepository(BaseRepository):
 
     def find_by_email(self, email: str) -> User:
         return self.session.exec(select(User).where(User.email == email)).first()
+    
+    def find_by_id(self, user_id: str) -> User:
+        return self.session.exec(select(User).where(User.id == user_id)).first()
+
+    def find_by_riot_id(self, riot_id: str) -> User:
+        return self.session.exec(select(User).where(User.riot_id == riot_id)).first()
 
     def update_riot_id(self, user_id: str, riot_id: str) -> dict:
         user = self.session.exec(select(User).where(User.id == user_id)).first()
