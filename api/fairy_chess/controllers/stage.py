@@ -28,14 +28,14 @@ class StageController:
     def fetch(self, contest_id: str) -> list[dict]:
         return [stage.model_dump() for stage in StageRepository().fetch_by_contest_id(contest_id)]
     
-    def shuffle(self, stage_id: str, user_id: str):
+    def shuffle(self, stage_id: str, round: int, user_id: str):
         self.__check_ownership(stage_id, user_id)
         competitors = StageRepository().competitors(stage_id)
         shuffle_list(competitors)
         lobbies, lobby_letter = list(), 'A'
         for index in range(0, len(competitors)-7, 8):
             lobby_competitors = competitors[index:index+8]
-            lobby_info = LobbyController().init_lobby(title=f'LOBBY {lobby_letter}', stage_id=stage_id, competitors=lobby_competitors)
+            lobby_info = LobbyController().init_lobby(title=f'LOBBY {round}-{lobby_letter}', stage_id=stage_id, competitors=lobby_competitors)
             lobbies.append([competitors.model_dump(exclude={'check_in', 'lobby_id'}) for competitors in lobby_info])
             lobby_letter = chr(ord(lobby_letter) + 1)
         return lobbies
