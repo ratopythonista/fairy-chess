@@ -7,7 +7,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Contest List</h1>
+                    <h6 class="m-0">Contest List</h6>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -25,11 +25,11 @@
                         <div class="col-lg-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <h3 class="card-title">{{contest.title}}</h3>
+                                    <h2 class="card-title">{{contest.title}}</h2>
                                     <p class="card-text">
-                                        <h4>START TIME: {{ contest.timestamp  }}</h4>
-                                        <h4>PLAYERS: {{ contest.start_players}}</h4>
-                                        <h4>MATCHES PER STAGE: {{ contest.qtd_matches}}</h4>
+                                        <h6>START TIME: {{ contest.timestamp  }}</h6>
+                                        <h6>PLAYERS: {{ contest.start_players}}</h6>
+                                        <h6>MATCHES PER STAGE: {{ contest.qtd_matches}}</h6>
                                     </p>
                                     <a href="/contest/{{contest.id}}" class="card-link">VIEW</a>
                                     <a href="/contest/{{contest.id}}" class="card-link">REGISTER</a>

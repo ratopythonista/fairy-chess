@@ -35,7 +35,7 @@ class Contest(FairyChessAPI):
             self.session.headers["X-Token"] = token_id
             response = self.session.get(FAIRY_CHESS_API_PATH + Endpoint.CONTESTS)
             if response.status_code == 403:
-                self.db.deleteById(token_data.get("id"))
+                self.db.deleteById(token_data[0].get("id"))
                 return []
             return response.json()
         return []
