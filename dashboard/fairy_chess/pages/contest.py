@@ -11,13 +11,10 @@ contest_router = APIRouter(prefix="/contest")
 
 @contest_router.get("/", response_class=HTMLResponse)
 async def contest(request: Request):
-    from loguru import logger
-    logger.debug(request.client.host)
-
-    User().login("teste@fc.com", "12345678", request.client.host) # ONLY FOR TESTING PURPOSES
+    user = User().login("teste@fc.com", "12345678", request.client.host) # ONLY FOR TESTING PURPOSES
 
     contest_list = Contest().fetch(request.client.host)
 
     return templates.TemplateResponse(
-        name="contests.html", context={"request": request, "contest_list": contest_list, "title": "Contests"}
+        name="contests.html", context={"request": request, "contest_list": contest_list, "title": "Contests", "user": user}
     )

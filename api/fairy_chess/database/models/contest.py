@@ -30,7 +30,12 @@ class ContestRepository(BaseRepository):
         query = select(Contest)
         if user_id:
             query.where(Contest.creator == user_id)
-        return [contest.model_dump() for contest in self.session.exec(query).all()]
+        contest_list = list()
+        for contest in self.session.exec(query).all():
+            contest_dumped = contest.model_dump()
+            contest_dumped['is_registred'] = bool(self.is_registred(contest_dumped['id'], user_id))
+            contest_list.append(contest_dumped)
+        return contest_list
 
     def find_by_id(self, contest_id: str) -> dict:
         if contest := self.session.exec(select(Contest).where(Contest.id == contest_id)).first():

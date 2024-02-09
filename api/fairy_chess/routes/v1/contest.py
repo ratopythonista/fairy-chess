@@ -40,6 +40,10 @@ def register(contest_id: str,  x_token: Annotated[str, Header()] = None,):
     user_id = decode_token(x_token)
     return ContestController().register(contest_id, user_id)
 
+@contest_router.post('/{contest_id}/registred')
+def is_registered(contest_id: str, x_token: Annotated[str, Header()] = None,):
+    user_id = decode_token(x_token)
+    return ContestController().is_registered(contest_id, user_id)
 
 @contest_router.post('/checkin/{contest_id}')
 def check_in(contest_id: str, x_token: Annotated[str, Header()] = None,):
@@ -47,6 +51,6 @@ def check_in(contest_id: str, x_token: Annotated[str, Header()] = None,):
     return ContestController().check_in(contest_id, user_id)
 
 @contest_router.post('/start/{contest_id}')
-def check_in(contest_id: str, x_token: Annotated[str, Header()] = None,):
+def start_contest(contest_id: str, x_token: Annotated[str, Header()] = None,):
     user_id = decode_token(x_token)
     return ContestController().start(contest_id, user_id)

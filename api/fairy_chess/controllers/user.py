@@ -14,6 +14,9 @@ class UserController:
     def link_riot(self, user_id: str, riot_id: str) -> dict:
         return UserRepository().update_riot_id(user_id, riot_id)
 
+    def get_user(self, user_id: str) -> dict:
+        return UserRepository().find_by_id(user_id).model_dump(exclude={'password', 'id'})
+
     def register(self, email: str, password: str) -> str:
         if re.fullmatch(EMAIL_RE, email) and re.fullmatch(PWD_RE, password):
             hash_password: bytes = hmac.new(HASH_KEY.encode(), password.encode(), 'sha256').digest()

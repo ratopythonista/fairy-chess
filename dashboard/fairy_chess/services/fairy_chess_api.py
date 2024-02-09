@@ -7,6 +7,7 @@ from fairy_chess.config import FAIRY_CHESS_API_PATH
 
 class Endpoint(str, Enum):
     LOGIN       = "user/login"
+    USER_DATA   = "user/me"
     CONTESTS    = "contest"
 
 
@@ -25,6 +26,10 @@ class User(FairyChessAPI):
             token = self.session.post(FAIRY_CHESS_API_PATH + Endpoint.LOGIN, json={"email": email, "password": password})
             access_token = token.json()["access_token"]
             self.db.add({"token": access_token, "host": host})
+        else:
+            access_token = host_session[0].get("token")
+        self.session.headers["X-Token"] = access_token
+        return self.session.get(FAIRY_CHESS_API_PATH + Endpoint.USER_DATA).json()
 
 
 class Contest(FairyChessAPI):

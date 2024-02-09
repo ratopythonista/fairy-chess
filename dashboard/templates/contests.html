@@ -31,8 +31,11 @@
                                         <h6>PLAYERS: {{ contest.start_players}}</h6>
                                         <h6>MATCHES PER STAGE: {{ contest.qtd_matches}}</h6>
                                     </p>
-                                    <a href="/contest/{{contest.id}}" class="card-link">VIEW</a>
-                                    <a href="/contest/{{contest.id}}" class="card-link">REGISTER</a>
+                                    {% if contest.is_registred %}
+                                        <a href="/contest/{{contest.id}}" class="card-link">VIEW</a>
+                                    {% else %}
+                                        <a href="/contest/{{contest.id}}" class="card-link">REGISTER</a>
+                                    {% endif %}                                    
                                 </div>
                             </div>
                         </div>

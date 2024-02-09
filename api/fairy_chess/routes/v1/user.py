@@ -8,6 +8,11 @@ from fairy_chess.controllers.user import UserController
 
 user_router = APIRouter(prefix="/user", tags=["admin"])
 
+@user_router.get('/me')
+def me(x_token: Annotated[str, Header()] = None):
+    user_id = decode_token(x_token)
+    return UserController().get_user(user_id)
+
 
 @user_router.post('/register')
 def register(email: Annotated[str, Body()], password: Annotated[str, Body()]):
