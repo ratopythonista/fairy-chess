@@ -28,14 +28,19 @@ def fetch(all: bool = False, x_token: Annotated[str, Header()] = None):
     user_id = decode_token(x_token)
     return ContestController().fetch(user_id=None if all else user_id)
 
+@contest_router.get('/{contest_id}')
+def fetch_by_id(contest_id: str, x_token: Annotated[str, Header()] = None):
+    decode_token(x_token)
+    return ContestController().fetch_by_id(contest_id)
 
-@contest_router.get('/competitors/{contest_id}')
+
+@contest_router.get('/{contest_id}/competitors')
 def competitors(contest_id: str, check_in: bool = None, x_token: Annotated[str, Header()] = None,):
     decode_token(x_token)
     return ContestController().competitors(contest_id, check_in)
 
 
-@contest_router.post('/register/{contest_id}')
+@contest_router.post('/{contest_id}/register')
 def register(contest_id: str,  x_token: Annotated[str, Header()] = None,):
     user_id = decode_token(x_token)
     return ContestController().register(contest_id, user_id)
@@ -45,12 +50,12 @@ def is_registered(contest_id: str, x_token: Annotated[str, Header()] = None,):
     user_id = decode_token(x_token)
     return ContestController().is_registered(contest_id, user_id)
 
-@contest_router.post('/checkin/{contest_id}')
+@contest_router.post('/{contest_id}/checkin')
 def check_in(contest_id: str, x_token: Annotated[str, Header()] = None,):
     user_id = decode_token(x_token)
     return ContestController().check_in(contest_id, user_id)
 
-@contest_router.post('/start/{contest_id}')
+@contest_router.post('/{contest_id}/start')
 def start_contest(contest_id: str, x_token: Annotated[str, Header()] = None,):
     user_id = decode_token(x_token)
     return ContestController().start(contest_id, user_id)

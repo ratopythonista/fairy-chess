@@ -15,6 +15,9 @@ class ContestController:
 
     def fetch(self, user_id: str = None) -> list[dict]:
         return ContestRepository().find_all(user_id)
+    
+    def fetch_by_id(self, contest_id: str) -> dict:
+        return ContestRepository().find_by_id(contest_id)
 
     def competitors(self, contest_id: str, check_in: bool | None = None) -> list[dict]:
         return ContestRepository().competitors(contest_id, check_in)

@@ -30,12 +30,18 @@
                                         <h6>START TIME: {{ contest.timestamp  }}</h6>
                                         <h6>PLAYERS: {{ contest.start_players}}</h6>
                                         <h6>MATCHES PER STAGE: {{ contest.qtd_matches}}</h6>
-                                    </p>
+                                    </p>                               
+                                </div>
+                                <div class="card-footer">
                                     {% if contest.is_registred %}
-                                        <a href="/contest/{{contest.id}}" class="card-link">VIEW</a>
+                                        <form method="get" action="/contest/{{contest.id}}">
+                                            <button type="submit" class="btn btn-block btn-success">VIEW</button>
+                                        </form>
                                     {% else %}
-                                        <a href="/contest/{{contest.id}}" class="card-link">REGISTER</a>
-                                    {% endif %}                                    
+                                        <form method="post" action="/contest/{{contest.id}}/register">
+                                            <button type="submit" class="btn btn-block btn-success">REGISTER</button>
+                                        </form>
+                                    {% endif %}  
                                 </div>
                             </div>
                         </div>

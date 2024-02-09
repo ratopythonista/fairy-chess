@@ -44,3 +44,19 @@ class Contest(FairyChessAPI):
                 return []
             return response.json()
         return []
+    
+    def fetch_by_id(self, contest_id: int, host: str) -> dict:
+        token_data = self.db.getBy({"host": host})
+        if token_data:
+            token_id = token_data[0].get("token")
+            self.session.headers["X-Token"] = token_id
+            return self.session.get(FAIRY_CHESS_API_PATH + f"{Endpoint.CONTESTS}/{contest_id}").json()
+        return {}
+    
+    def register(self, contest_id: int, host: str) -> dict:
+        token_data = self.db.getBy({"host": host})
+        if token_data:
+            token_id = token_data[0].get("token")
+            self.session.headers["X-Token"] = token_id
+            return self.session.post(FAIRY_CHESS_API_PATH + f"{Endpoint.CONTESTS}/{contest_id}/register")
+        return {}
