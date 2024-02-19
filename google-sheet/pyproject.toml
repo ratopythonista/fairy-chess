@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fairychess-google-sheet"
+version = "0.1.0"
+dependencies = [
+    "requests==2.31.0",
+    "discord.py==2.3.2",
+    "python-dotenv-1.0.1",
+    "google-auth-oauthlib==1.2.0",
+    "google-auth-httplib2==0.2.0",
+    "google-api-python-client==2.118.0"
+]
+
+authors = [
+  { name="Rato Pythonista", email="ratopythonista@gmail.com" },
+]
+description = "Fairy Chess - TFT Tournment"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/ratopythonista/fairy-chess"
+"Bug Tracker" = "https://github.com/ratopythonista/fairy-chess/issues"
