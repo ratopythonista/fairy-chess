@@ -12,28 +12,19 @@ class FairyChessPage:
 
     def navbar(self) -> list[AnyComponent]:
         profile = c.Link(
-            components=[c.Text(text='Profile')],
-            on_click=GoToEvent(url='/user/profile'),
-            active='startswith:/user/profile',
+            components=[c.Button(text='Profile')],
+            on_click=GoToEvent(url='/ui/user/profile'),
+            active='startswith:/ui/user/profile',
         )
         login = c.Link(
             components=[c.Button(text='Login')],
-            on_click=GoToEvent(url='/auth/login/password'),
-            active='startswith:/user/login',
+            on_click=GoToEvent(url='/ui/user/auth'),
         )
         logout = c.Link(
             components=[c.Button(text='Logout')],
-            on_click=GoToEvent(url='/auth/logout'),
-            active='startswith:/user/logout',
+            on_click=GoToEvent(url='/ui/user/logout'),
         )
         navbar_links = [
-            c.Link(
-                components=[
-                    c.Text(text='Home')
-                ],
-                on_click=GoToEvent(url='/'),
-                active='startswith:/',
-            ),
             c.Link(
                 components=[c.Text(text='Play')],
                 on_click=GoToEvent(url='/play'),
@@ -59,7 +50,7 @@ class FairyChessPage:
 
     def footer(self) -> list[AnyComponent]:
         return c.Footer(
-            extra_text='TFT Tournaments',
+            extra_text='TFT Tournments',
             links=[
                 c.Link(components=[c.Image(
                     src='https://i.ibb.co/PrZW1zm/fairychess-logo-v0-1.png',

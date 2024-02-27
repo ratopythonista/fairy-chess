@@ -43,10 +43,7 @@ async def profile(authorization: Annotated[str, Header()] = '') -> list[AnyCompo
     user_id = decode_token(authorization.split()[1])
     user = UserRepository().find_by_id(user_id)
     return FairyChessPage(
-        c.Paragraph(text=f'You are logged in as "{user.email}".'),
-        c.Button(text='Logout', on_click=PageEvent(name='submit-form')),
-        c.Heading(text='User Data:', level=3),
-        c.Text(text=json.dumps(user_id, indent=2)),
+        c.Paragraph(text=f'You are logged in as "{user.email}" -- "{user.riot_id}".'),
         title='Profile',
         user_riot_id=user.riot_id,
     ).render()
