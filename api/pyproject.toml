@@ -7,14 +7,17 @@ name = "fairychess"
 version = "0.1.0"
 dependencies = [
     "pyjwt==2.8.0",
+    "fastui==0.5.2",
     "loguru==0.7.0",
     "uvicorn==0.23.2",
+    "pydantic==2.6.1",
     "sqlmodel==0.0.14",
     "requests==2.31.0",
-    "fastapi==0.103.2",
+    "fastapi==0.109.2",
     "pycryptodome==3.19.0",
     "python-dotenv==1.0.0",
-    "psycopg2-binary==2.9.9"
+    "psycopg2-binary==2.9.9",
+    "python-multipart==0.0.7",
 ]
 authors = [
   { name="Rato Pythonista", email="ratopythonista@gmail.com" },
