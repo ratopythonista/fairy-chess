@@ -1,9 +1,12 @@
 import re
 import hmac
 
+from fastapi import Header
+from typing import Annotated
+
 from fairy_chess.config import HASH_KEY
-from fairy_chess.controllers.token import encode_token
-from fairy_chess.database.models.user import UserRepository
+from fairy_chess.database.models.user import UserRepository, User
+from fairy_chess.controllers.token import encode_token, decode_token
 
 from fairy_chess.exceptions import ControllerException
 
@@ -28,3 +31,7 @@ class UserController:
             return encode_token(user.id)
         raise ControllerException(status_code=403, detail="User/Password invalid")
 
+    @classmethod
+    def get_from_token(cls, authorization: Annotated[str, Header()] = '') -> User:
+        user_id = decode_token(authorization.split()[1])
+        return UserRepository().find_by_id(user_id)

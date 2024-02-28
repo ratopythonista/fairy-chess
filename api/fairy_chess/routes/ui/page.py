@@ -26,9 +26,9 @@ class FairyChessPage:
         )
         navbar_links = [
             c.Link(
-                components=[c.Text(text='Play')],
-                on_click=GoToEvent(url='/play'),
-                active='startswith:/play',
+                components=[c.Text(text='Contests')],
+                on_click=GoToEvent(url='/ui/contest/'),
+                active='startswith:/ui/contest',
             ),
             c.Link(
                 components=[c.Text(text='Rules')],

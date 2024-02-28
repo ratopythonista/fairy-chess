@@ -13,7 +13,7 @@ class ContestController:
         except:
             raise ControllerException(status_code=403, detail="Contest alredy exists")
 
-    def fetch(self, user_id: str = None) -> list[dict]:
+    def fetch(self, user_id: str = None) -> list[Contest]:
         return ContestRepository().find_all(user_id)
 
     def competitors(self, contest_id: str, check_in: bool | None = None) -> list[dict]:
